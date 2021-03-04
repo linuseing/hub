@@ -1,0 +1,6 @@
+type Query {
+    coreVersion: String!
+    pluginVersion: String!
+    entity(name: String): Entity
+    entities: [Entity]
+}

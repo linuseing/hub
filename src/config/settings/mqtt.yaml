@@ -1,0 +1,5 @@
+server_ip: "192.168.2.139"
+client_id: "hub-dev"
+port: 1883
+username: "admin"
+password: "admin"
