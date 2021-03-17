@@ -109,11 +109,11 @@ class MQTT:
     async def async_publish(self, payload: Any, context: Context, topic: str, qos=0, retain=True):
         """
         Publish a message over MQTT
-        :param payload:
-        :param context:
-        :param topic:
-        :param qos:
-        :param retain:
+        :param payload: msg payload
+        :param context: context
+        :param topic: topic
+        :param qos: qos
+        :param retain: retain
         :return:
         """
         if context.authorize(PUBLISH, '*'):

@@ -1,0 +1,4 @@
+type Event {
+    event_type: String!
+    event_content: Any
+}

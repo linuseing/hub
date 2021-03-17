@@ -1,14 +1,17 @@
-from typing import Any, List
+from typing import Any, List, Generic, TypeVar
 
 from objects.Context import Context
 
 
-class Event:
+T = TypeVar('T')
+
+
+class Event(Generic[T]):
 
     def __init__(self, event_type: str, event_content=None, context: Context = None):
         self.event_type: str = event_type
-        self.event_content: Any = event_content
-        self.context: Context = (context or Context.default())
+        self.event_content: T = event_content
+        self.context: Context = (context or Context.admin())
 
     @property
     def path(self) -> List[str]:

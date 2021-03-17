@@ -1,4 +1,11 @@
 from colorsys import rgb_to_hsv, hsv_to_rgb
+from ctypes import Union
+from typing import Tuple, List
+
+
+HSV = Tuple[float, float, float]
+RGB = Tuple[int, int, int]
+
 
 def RGB_to_hex(RGB):
     """[255,255,255] -> '#FFFFFF' """
@@ -63,7 +70,7 @@ class Color:
         return self._hsv
 
     @hsv.setter
-    def hsv(self, value):
+    def hsv(self, value: HSV):
         rgb = hsv_to_rgb(*value)
         self._rgb = list(map(lambda x: int(x * 255), rgb))
         self._hsv = value

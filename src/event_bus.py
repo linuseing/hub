@@ -7,6 +7,7 @@ from exceptions import EventCallbackNotFound, NotAuthorizedError
 from objects.Context import Context
 from objects.Event import Event
 from objects.OutputService import OutputService
+from plugin_loader import build_doc
 
 if TYPE_CHECKING:
     from core import Core
@@ -24,6 +25,7 @@ class EventBus:
         core.io.add_output_service('bus.dispatch', OutputService(
             self.dispatch_event_service,
             None,
+            doc=build_doc(self.dispatch_event_service)
         ))
 
     def dispatch(self, event: Event):
@@ -107,6 +109,7 @@ class EventBus:
         return event['event']
 
     async def dispatch_event_service(self, content: Any, context: Context, event_type: str = ""):
+        """dispatch an event on the event bus"""
         if context.authorize(BUS, DISPATCH_EVENT):
             event = Event(event_type, content, context)
             self.dispatch(event)

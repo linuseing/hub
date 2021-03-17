@@ -1,0 +1,1 @@
+REST_METHODS = ["GET", "POST", "PUT", "DELETE"]

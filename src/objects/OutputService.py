@@ -1,16 +1,37 @@
-from typing import Callable
+from dataclasses import dataclass
+from typing import Callable, Optional, Dict, Any
 
 from voluptuous import Schema
 
 from exceptions import ConfigError
 
 
+@dataclass
+class Arg:
+    doc: str
+    type: Any
+    default: Any
+
+
+@dataclass
+class ServiceDocs:
+    description: str
+    args: Dict[str, Arg]
+
+
 class OutputService:
 
-    def __init__(self, handler: Callable, schema: Schema = None, input_validator: Callable = None):
+    def __init__(
+            self,
+            handler: Callable,
+            schema: Schema = None,
+            input_validator: Callable = None,
+            doc: Optional[ServiceDocs] = None
+    ):
         self.handler: Callable = handler
         self.schema: Schema = schema
         self.input_validator: Callable = input_validator
+        self.doc = doc
 
     def test_config(self, config):
         if self.schema:

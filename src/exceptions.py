@@ -1,5 +1,4 @@
 from objects.Context import Context
-from objects.User import User
 
 
 class EventCallbackNotFound(Exception):
@@ -23,6 +22,14 @@ class YAMLError(Exception):
 
 
 class ComponentNotFound(Exception):
+    pass
+
+
+class FlowNotFound(Exception):
+    pass
+
+
+class EntityNotFound(Exception):
     pass
 
 

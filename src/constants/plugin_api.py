@@ -9,3 +9,20 @@ OUTPUT_SERVICE = 'output_service'
 INPUT_SERVICE = 'input_service'
 FORMATTER = 'formatter'
 FORMATTER_NAME = 'formatter_name'
+FORMATTER_IN_T = 'fit'
+FORMATTER_OUT_T = 'fot'
+FORMATTER_CONFIG = 'fc'
+
+POLL_JOB = 'poll_job'
+POLL_INTERVAL = 'poll_interval'
+
+ON_EVENT = 'on_event'
+EVENT = 'event'
+
+REST_ENDPOINT = 'rest_endpoint'
+REST_HANDLER = 'rest_handler'
+REST_PATH = 'rest_path'
+REST_METHOD = 'rest_method'
+
+DATA_BOUND = 'data_bound'
+DATA_ENTRY = 'data_entry'

@@ -1,9 +1,15 @@
+from constants.entity_types import EntityType
 from objects.component import Component
 
 
-class Brightness(Component):
-    def __init__(self, configuration, handler):
-        super().__init__(configuration, handler)
+class Brightness(Component[int]):
+    """"""
+
+    type = 'brightness'
+    gql_type = 'Brightness'
+
+    def __init__(self, configuration, handler, entity, name=''):
+        super().__init__(configuration, handler, entity, name)
         self.settings = configuration
         self.handler = handler
 

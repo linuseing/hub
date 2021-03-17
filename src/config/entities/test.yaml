@@ -1,5 +1,10 @@
-type: Lamp
+type: Lamp-dimmable
 control: mqtt.publish
 switch:
   topic: test
   pipe: switch.to_string
+brightness:
+  topic: test
+settings:
+  alexa:
+  grid: test

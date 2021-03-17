@@ -1,0 +1,7 @@
+type: Lamp
+control: mqtt.publish
+switch:
+  topic: test
+  pipe: switch.to_string
+settings:
+  alexa:

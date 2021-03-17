@@ -1,6 +1,7 @@
 import asyncio
 import time
 import datetime
+import uuid
 from typing import TYPE_CHECKING
 
 import pytz as pytz
@@ -15,7 +16,7 @@ UTC = pytz.UTC
 class Timer:
 
     def __init__(self, core: 'Core', tz=UTC):
-        self._tasks = []
+        self._tasks = {}
         self._id_counter = 0
         self.time_zone = tz
         self.core: 'Core' = core
@@ -76,14 +77,13 @@ class Timer:
         :return: handler
         """
 
-        task_id = self._id_counter + 1
-        self._id_counter += 1
+        task_id = uuid.uuid4()
 
         async def cb(t):
             if event:
                 await event.wait()
             if wait_for_job:
-                await self.core.add_job(callback)
+                await self.core.async_add_job(callback)
             else:
                 self.core.add_job(callback)
             self._tasks[task_id] = self.scheduled_call(

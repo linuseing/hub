@@ -1,0 +1,20 @@
+type Query {
+    coreVersion: String!
+    pluginVersion: String!
+    entity(name: String): Entity
+    entities: [Entity]
+    plugins: [String]
+    value(key: String!): Any!
+    availableComponents: [String]
+}
+type Subscription {
+    entity(name: String): Entity!
+    value(key: String): Any
+    eventStream: Event!
+}
+type Mutation {
+    setComponent(entity: String, component: String, target: Any): Boolean!
+    callComponentMethod(entity: String, component: String, method: String, target: Any): Boolean!
+    setValue(key: String, value: Any): Boolean!
+    dispatchEvent(eventType: String, eventContent: Any): Boolean!
+}

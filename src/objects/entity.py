@@ -1,9 +1,23 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, TypedDict
 
 from constants.entity_types import EntityType
 from exceptions import ComponentNotFound
 from objects.Context import Context
 from objects.component import Component
+from objects.component import GQLInterface as ComponentGQLInterface
+from objects.component import JSONInterface as ComponentJSONInterface
+
+
+class GQLInterface(TypedDict):
+    name: str
+    type: str
+    components: List[ComponentGQLInterface]
+
+
+class JSONInterface(TypedDict):
+    name: str
+    type: str
+    components: List[ComponentJSONInterface]
 
 
 class Entity:
@@ -23,6 +37,20 @@ class Entity:
     async def call_method(self, component: str, method: str, target: Any, context: Context):
         try:
             component = self.components[component]
-            await component.methods[method](target, context)
+            return await component.methods[method](target, context)
         except KeyError:
             raise ComponentNotFound
+
+    def to_json(self) -> JSONInterface:
+        return {
+            'name': self.name,
+            'type': str(self.type),
+            'components': [c.to_json() for c in self.components.values()]
+        }
+
+    def gql(self):
+        return {
+            'name': self.name,
+            'type': str(self.type),
+            'components': [c.gql() for c in self.components.values()],
+        }

@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 
 from voluptuous import Schema
 
@@ -37,9 +37,59 @@ def input_service(name: str, schema: Optional[Schema] = None):
     return wrapper
 
 
-def formatter(name: str):
+def formatter(name: str, in_type=Any, out_type=Any, config=None):
+    if config is None:
+        config = {}
+
     def wrapper(func):
         setattr(func, FORMATTER, True)
         setattr(func, FORMATTER_NAME, name)
+        setattr(func, FORMATTER_IN_T, in_type)
+        setattr(func, FORMATTER_OUT_T, out_type)
+        setattr(func, FORMATTER_CONFIG, config)
+        return func
+    return wrapper
+
+
+def poll_job(interval: float):
+    def wrapper(func: Callable):
+        setattr(func, POLL_JOB, True)
+        setattr(func, POLL_INTERVAL, interval)
+        return func
+    return wrapper
+
+
+def on(event):
+    def wrapper(func):
+        setattr(func, ON_EVENT, True)
+        setattr(func, EVENT, event)
+        return func
+    return wrapper
+
+
+def rest_endpoint(func):
+    setattr(func, REST_ENDPOINT, True)
+    return func
+
+
+def rest_handler(path: str, method: str):
+    """
+    Registers an coroutine as a REST endpoint handler.
+    :param path: api endpoint (must start with '/api')
+    :param method: one of the following: 'get', 'post' # TODO: add all
+    :return:
+    """
+    def wrapper(func):
+        setattr(func, REST_HANDLER, True)
+        setattr(func, REST_PATH, path)
+        setattr(func, REST_METHOD, method)
+        return func
+    return wrapper
+
+
+def bind_to(entry: str):
+    def wrapper(func):
+        setattr(func, DATA_BOUND, True)
+        setattr(func, DATA_ENTRY, entry)
         return func
     return wrapper

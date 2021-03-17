@@ -1,0 +1,42 @@
+scalar Any
+type Entity {
+    name: String
+    type: String
+    components: [Component]
+}
+
+interface Component {
+    name: String!
+    type: String!
+    address: String!
+    state: Any!
+    methods: [String]
+}
+
+type Switch implements Component {
+    name: String!
+    type: String!
+    address: String!
+    state: Any!
+    methods: [String]
+}
+
+type Color implements Component {
+    name: String!
+    type: String!
+    address: String!
+    state: Any!
+    methods: [String]
+}
+
+type Brightness implements Component {
+    name: String!
+    type: String!
+    address: String!
+    state: Any!
+    methods: [String]
+}
+
+type EntitySubscription {
+    entities: [Entity]
+}

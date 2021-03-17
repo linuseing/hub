@@ -1,14 +1,29 @@
+from dataclasses import dataclass
+
 from exceptions import ServiceNotFoundError, ConfigError, FormatterNotFound
 from helper import package_loader
 from objects.Context import Context
 from objects.InputService import InputService
 from objects.OutputService import OutputService
 
-from typing import TYPE_CHECKING, Dict, Callable, Any, Union, Optional
+from typing import TYPE_CHECKING, Dict, Callable, Any, Union, Optional, TypedDict
 from inspect import getmembers, isfunction
 
 if TYPE_CHECKING:
     from core import Core
+
+
+class FormatterDocs(TypedDict):
+    name: str
+    in_type: Any
+    out_type: Any
+    config: Dict[str, str]
+
+
+@dataclass
+class Formatter:
+    handler: Callable
+    docs: FormatterDocs
 
 
 class IO:
@@ -23,7 +38,7 @@ class IO:
         self._input_services: Dict[str, InputService] = {}
         self._output_services: Dict[str, OutputService] = {}
 
-        self._formatter: Dict[str, Callable] = {}
+        self._formatter: Dict[str, Formatter] = {}
 
         self.load_formatter()
 
@@ -33,9 +48,28 @@ class IO:
             module_name = module.__name__[17:]
             for function_name, function in getmembers(module, isfunction):
                 if getattr(function, 'export', False):
-                    self._formatter[f'{module_name}.{function_name}'] = function
+                    formatter = Formatter(
+                        handler=function,
+                        docs={
+                            'in_type': getattr(function, 'in_type', Any),
+                            'out_type': getattr(function, 'out_type', Any),
+                            'config': getattr(function, 'config', {}),
+                            'name': f'{module_name}.{function_name}'
+                        }
+                    )
+                    self._formatter[f'{module_name}.{function_name}'] = formatter
 
-    def add_formatter(self, name: str, formatter: Callable):
+    def has_service(self, service_type: Union[OutputService, InputService], service: str) -> bool:
+        try:
+            if type(service_type) is OutputService:
+                self._output_services.get(service)
+            else:
+                self._input_services.get(service)
+            return True
+        except KeyError:
+            return False
+
+    def add_formatter(self, name: str, formatter: Formatter):
         self._formatter[name] = formatter
 
     def add_output_service(self, name: str, service: OutputService):
@@ -99,6 +133,10 @@ class IO:
 
     def get_formatter(self, name: str) -> Callable[[Any], Any]:
         try:
-            return self._formatter[name]
+            return self._formatter[name].handler
         except KeyError:
             raise FormatterNotFound(name)
+
+    @property
+    def formatter(self):
+        return list

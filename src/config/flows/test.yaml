@@ -1,0 +1,5 @@
+test:
+  - config:
+      active: 1
+      suspend_on_error: 1
+  - bus.listen:
