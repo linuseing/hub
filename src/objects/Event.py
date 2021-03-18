@@ -1,4 +1,4 @@
-from typing import Any, List, Generic, TypeVar
+from typing import List, Generic, TypeVar, Dict, Generator
 
 from helper.json_encoder import default_encoder
 from objects.Context import Context
@@ -19,17 +19,23 @@ class Event(Generic[T]):
         """returns the event_type as a list representing the path (event_name separated by '.')"""
         return self.event_type.split('.')
 
-    def walk_path(self):
+    def walk_path(self) -> Generator[str]:
         path = ''
         for fragment in self.path:
             path += f'.{fragment}'
             yield path[1:]
 
-    def gql(self):
+    def to_json(self) -> Dict:
+        return {
+            'event_type': self.event_type,
+            'event_content': self.event_content
+        }
+
+    def gql(self) -> Dict:
         return {
             'eventType': self.event_type,
             'eventContent': default_encoder(self.event_content)
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Event {self.event_type} | {self.event_content}>"

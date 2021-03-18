@@ -87,6 +87,12 @@ def rest_handler(path: str, method: str):
     return wrapper
 
 
+def websocket_handler(command):
+    def wrapper(func):
+        return func
+    return wrapper
+
+
 def bind_to(entry: str):
     def wrapper(func):
         setattr(func, DATA_BOUND, True)
