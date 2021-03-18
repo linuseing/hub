@@ -1,6 +1,8 @@
 import asyncio
 from typing import Dict, List, Callable, TYPE_CHECKING, Any
 
+from asyncio_multisubscriber_queue import MultisubscriberQueue
+
 from constants import events, scopes
 from constants.scopes import BUS, DISPATCH_EVENT
 from exceptions import EventCallbackNotFound, NotAuthorizedError
@@ -28,7 +30,13 @@ class EventBus:
             doc=build_doc(self.dispatch_event_service)
         ))
 
+        self._event_stream = MultisubscriberQueue()
+
     def dispatch(self, event: Event):
+        """Dispatches an event on the bus"""
+        self.core.add_job(self.async_dispatch, event)
+
+    async def async_dispatch(self, event: Event):
         """Dispatches an event on the bus"""
 
         if not event.context.authorize(scopes.BUS, scopes.WRITE):
@@ -49,6 +57,8 @@ class EventBus:
 
         for handler in listeners:
             self.core.add_job(handler, event)
+
+        await self._event_stream.put(event)
 
     def listen(self, event_type: str, callback: Callable) -> Callable:
         """listen for events on the bus
@@ -115,3 +125,7 @@ class EventBus:
             self.dispatch(event)
         else:
             raise NotAuthorizedError(f'user {context.user} is not allowed to access the bus', context, BUS)
+
+    @property
+    def event_stream(self) -> MultisubscriberQueue:
+        return self._event_stream

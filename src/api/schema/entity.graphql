@@ -40,3 +40,10 @@ type Brightness implements Component {
 type EntitySubscription {
     entities: [Entity]
 }
+
+type Formatter {
+    name: String!
+    inType: String
+    outType: String
+    config: Any
+}

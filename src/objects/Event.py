@@ -1,5 +1,6 @@
 from typing import Any, List, Generic, TypeVar
 
+from helper.json_encoder import default_encoder
 from objects.Context import Context
 
 
@@ -23,6 +24,12 @@ class Event(Generic[T]):
         for fragment in self.path:
             path += f'.{fragment}'
             yield path[1:]
+
+    def gql(self):
+        return {
+            'eventType': self.event_type,
+            'eventContent': default_encoder(self.event_content)
+        }
 
     def __repr__(self):
         return f"<Event {self.event_type} | {self.event_content}>"

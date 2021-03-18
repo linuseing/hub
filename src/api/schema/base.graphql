@@ -6,6 +6,7 @@ type Query {
     plugins: [String]
     value(key: String!): Any!
     availableComponents: [String]
+    availableFormatter: [Formatter]!
 }
 type Subscription {
     entity(name: String): Entity!

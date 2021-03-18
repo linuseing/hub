@@ -9,6 +9,7 @@ ENTITY = 'entity'
 PLUGINS = 'plugins'
 
 VALUE = 'value'
+EVENT = 'eventStream'
 
 # entities
 AVAILABLE_COMPONENTS = 'availableComponents'

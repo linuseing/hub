@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from helper.json_encoder import default_encoder
 from objects.Context import Context
+from objects.Event import Event
 from .gql_constants import *
 
 if TYPE_CHECKING:
@@ -31,7 +32,7 @@ class GraphAPI:
         self.query.set_field(PLUGINS, lambda *_: list(core.plugins.keys()))
         self.query.set_field(VALUE, self.get_value)
         self.query.set_field(AVAILABLE_COMPONENTS, lambda *_: list(core.registry.components.keys()))
-        self.query.set_field(AVAILABLE_FORMATTER, lambda *_: list(core.io._formatter))
+        self.query.set_field(AVAILABLE_FORMATTER, lambda *_: list(map(lambda x: x.gql(), core.io.formatter)))
 
         self.query.set_field(ENTITY, self.get_entity)
         self.query.set_field(ENTITIES, self.get_entities)
@@ -41,6 +42,9 @@ class GraphAPI:
 
         self.subscription.set_field(VALUE, self.value_subscription)
         self.subscription.set_source(VALUE, self.value_subscription_source)
+
+        self.subscription.set_field(EVENT, self.event_subscription)
+        self.subscription.set_source(EVENT, self.event_subscription_source)
 
         self.mutations.set_field(SET_COMPONENT, self.set_mutation)
 
@@ -81,6 +85,14 @@ class GraphAPI:
     @staticmethod
     def value_subscription(value, *_, key=''):
         return value
+
+    @staticmethod
+    def event_subscription(value, *_):
+        return value
+
+    async def event_subscription_source(self, *_):
+        async for event in self.core.bus.event_stream.subscribe():  # type: Event
+            yield event.gql()
 
     def set_mutation(self, _, info, entity, component, target):
         self.core.registry.call_method(entity, component, 'set', target, context=Context.admin(external=True))

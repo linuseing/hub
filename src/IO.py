@@ -25,6 +25,14 @@ class Formatter:
     handler: Callable
     docs: FormatterDocs
 
+    def gql(self):
+        return {
+            'name': self.docs['name'],
+            'inType': str(self.docs['in_type']),
+            'outType': str(self.docs['out_type']),
+            'config': self.docs['config']
+        }
+
 
 class IO:
 
@@ -139,4 +147,4 @@ class IO:
 
     @property
     def formatter(self):
-        return list
+        return list(self._formatter.values())
