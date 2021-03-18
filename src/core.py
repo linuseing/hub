@@ -13,6 +13,7 @@ from event_bus import EventBus
 from IO import IO
 from flow_engine import FlowEngine
 from objects.Context import Context
+from objects.Event import Event
 from objects.core_state import CoreState
 from plugin_loader import load_plugins
 from timer import Timer
@@ -57,14 +58,16 @@ class Core:
             with suppress(Exception):
                 _input = await ainput()
                 args = _input.split(' ')
-                if args[0] == 'run':
+                if args[0] in ['run', 'r']:
                     if len(args) == 4:
                         config = ast.literal_eval(args[3])
                     else:
                         config = {}
                     self.io.run_service(args[1], ast.literal_eval(args[2]), config, Context.admin())
-                elif args[0] == 'set':
+                elif args[0] in ['set', 's']:
                     self.registry.call_method_d(f'{args[1]}.set', ast.literal_eval(args[2]), Context.admin())
+                elif args[0] in ['dispatch', 'd']:
+                    self.bus.dispatch(Event(args[1], ast.literal_eval(args[2])))
 
     def add_plugin(self, name: str, plugin: Any):
         self.plugins[name] = plugin
