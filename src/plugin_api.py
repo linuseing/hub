@@ -76,7 +76,7 @@ def rest_handler(path: str, method: str):
     """
     Registers an coroutine as a REST endpoint handler.
     :param path: api endpoint (must start with '/api')
-    :param method: one of the following: 'get', 'post' # TODO: add all
+    :param method: one of the following: 'get', 'post'
     :return:
     """
     def wrapper(func):

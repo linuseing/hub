@@ -105,6 +105,7 @@ def load_plugins(core):
                         formatter = Formatter(
                             handler=callback,
                             docs={
+                                'name': formatter_name,
                                 'in_type': getattr(callback, FORMATTER_IN_T),
                                 'out_type': getattr(callback, FORMATTER_OUT_T),
                                 'config': getattr(callback, FORMATTER_CONFIG)
@@ -138,6 +139,7 @@ def load_plugins(core):
                     formatter = Formatter(
                         handler=formatter,
                         docs={
+                            'name': formatter_name,
                             'in_type': getattr(formatter, FORMATTER_IN_T),
                             'out_type': getattr(formatter, FORMATTER_OUT_T),
                             'config': getattr(formatter, FORMATTER_CONFIG)
