@@ -31,6 +31,6 @@ class ObjectEncoder(json.JSONEncoder):
                 and not inspect.isroutine(value)
             )
             return self.default(d)
-        elif hasattr(obj, '__repr__'):
+        elif hasattr(obj, "__repr__"):
             return obj.__repr__()
         return obj

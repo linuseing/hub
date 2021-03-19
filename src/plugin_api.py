@@ -7,24 +7,28 @@ from constants.plugin_api import *
 
 def plugin(name):
     def wrapper(cls):
-        setattr(cls, 'plugin', True)
+        setattr(cls, "plugin", True)
         setattr(cls, PLUGIN_NAME_ATTR, name)
         return cls
+
     return wrapper
 
 
 def run_after_init(func):
-    setattr(func, 'run_after_init', True)
+    setattr(func, "run_after_init", True)
     return func
 
 
-def output_service(name: str, schema: Optional[Schema] = None, input_validator: Callable = None):
+def output_service(
+    name: str, schema: Optional[Schema] = None, input_validator: Callable = None
+):
     def wrapper(func):
         setattr(func, SERVICE_NAME, name)
         setattr(func, OUTPUT_SERVICE, True)
         setattr(func, SERVICE_VALIDATOR, input_validator)
         setattr(func, SERVICE_SCHEMA, schema)
         return func
+
     return wrapper
 
 
@@ -34,6 +38,7 @@ def input_service(name: str, schema: Optional[Schema] = None):
         setattr(func, INPUT_SERVICE, True)
         setattr(func, SERVICE_SCHEMA, schema)
         return func
+
     return wrapper
 
 
@@ -48,6 +53,7 @@ def formatter(name: str, in_type=Any, out_type=Any, config=None):
         setattr(func, FORMATTER_OUT_T, out_type)
         setattr(func, FORMATTER_CONFIG, config)
         return func
+
     return wrapper
 
 
@@ -56,6 +62,7 @@ def poll_job(interval: float):
         setattr(func, POLL_JOB, True)
         setattr(func, POLL_INTERVAL, interval)
         return func
+
     return wrapper
 
 
@@ -64,6 +71,7 @@ def on(event):
         setattr(func, ON_EVENT, True)
         setattr(func, EVENT, event)
         return func
+
     return wrapper
 
 
@@ -79,17 +87,20 @@ def rest_handler(path: str, method: str):
     :param method: one of the following: 'get', 'post'
     :return:
     """
+
     def wrapper(func):
         setattr(func, REST_HANDLER, True)
         setattr(func, REST_PATH, path)
         setattr(func, REST_METHOD, method)
         return func
+
     return wrapper
 
 
 def websocket_handler(command):
     def wrapper(func):
         return func
+
     return wrapper
 
 
@@ -98,4 +109,5 @@ def bind_to(entry: str):
         setattr(func, DATA_BOUND, True)
         setattr(func, DATA_ENTRY, entry)
         return func
+
     return wrapper

@@ -8,16 +8,19 @@ COMPONENT_TYPE_MAPPING = {}
 
 def legacy_entity(entity: Entity) -> Dict:
     return {
-        'name': entity.name,
-        'type': entity.type,
-        'tags': [],
-        'settings': entity.settings,
-        'attributes': map(lambda x: {
-            'name': x.name,
-            'type': COMPONENT_TYPE_MAPPING[x.type],
-            'state': x.state,
-            'settings': x.settings
-        }, entity.components.values())
+        "name": entity.name,
+        "type": entity.type,
+        "tags": [],
+        "settings": entity.settings,
+        "attributes": map(
+            lambda x: {
+                "name": x.name,
+                "type": COMPONENT_TYPE_MAPPING[x.type],
+                "state": x.state,
+                "settings": x.settings,
+            },
+            entity.components.values(),
+        ),
     }
 
 

@@ -1,3 +1,3 @@
 # Config:
-USERNAME = 'username'
-POLL_INTERVAL = 'poll_interval'
+USERNAME = "username"
+POLL_INTERVAL = "poll_interval"

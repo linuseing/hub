@@ -34,7 +34,7 @@ class EntityNotFound(Exception):
 
 
 class NotAuthorizedError(Exception):
-    def __init__(self, msg: str = '', context: Context = None, scope: str = ''):
+    def __init__(self, msg: str = "", context: Context = None, scope: str = ""):
         self.msg = msg
         self.context = context
         self.scope = scope

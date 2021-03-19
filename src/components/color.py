@@ -8,10 +8,10 @@ from objects.component import Component
 
 class Color(Component[ColorObj]):
 
-    type = 'color'
-    gql_type = 'Color'
+    type = "color"
+    gql_type = "Color"
 
-    def __init__(self, configuration: dict, handler: Callable, entity, name=''):
+    def __init__(self, configuration: dict, handler: Callable, entity, name=""):
         super().__init__(configuration, handler, entity, name)
         self.settings = configuration
         self.handler = handler
@@ -19,12 +19,12 @@ class Color(Component[ColorObj]):
         self.state = ColorObj()
 
         self.methods = {
-            'set': self.set,
-            'r': self.set_r,
-            'g': self.set_g,
-            'b': self.set_b,
-            'hsv': self.set_hsv,
-            'rgb': self.set_rgb
+            "set": self.set,
+            "r": self.set_r,
+            "g": self.set_g,
+            "b": self.set_b,
+            "hsv": self.set_hsv,
+            "rgb": self.set_rgb,
         }
 
     async def set(self, target: ColorObj, context: Context) -> ColorObj:

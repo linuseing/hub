@@ -18,17 +18,19 @@ silent_events = [events.MATCH_ALL]
 
 
 class EventBus:
-
-    def __init__(self, core: 'Core'):
+    def __init__(self, core: "Core"):
         self._listeners: Dict[str, List] = {}
         self.core = core
 
         # IO setup
-        core.io.add_output_service('bus.dispatch', OutputService(
-            self.dispatch_event_service,
-            None,
-            doc=build_doc(self.dispatch_event_service)
-        ))
+        core.io.add_output_service(
+            "bus.dispatch",
+            OutputService(
+                self.dispatch_event_service,
+                None,
+                doc=build_doc(self.dispatch_event_service),
+            ),
+        )
 
         self._event_stream = MultisubscriberQueue()
 
@@ -47,7 +49,7 @@ class EventBus:
         for fragment in event.walk_path():
             listeners += self._listeners.get(fragment, [])
             # getting top level matches
-            listeners += self._listeners.get(f'{fragment}.*', [])
+            listeners += self._listeners.get(f"{fragment}.*", [])
 
         listeners += self._listeners.get(events.MATCH_ALL, [])
 
@@ -75,7 +77,9 @@ class EventBus:
 
         return remove
 
-    def remove_listener(self, event_type: str, callback: Callable, raise_on_failure=False):
+    def remove_listener(
+        self, event_type: str, callback: Callable, raise_on_failure=False
+    ):
         """
 
         :param event_type: event type
@@ -94,9 +98,11 @@ class EventBus:
 
     def listen_once(self, event_type: str, callback: Callable):
         """listens for an event and removes the callback after the first invocation"""
+
         def _callback(event: Event):
             self.core.add_job(callback, event)
             self.remove_listener(event_type, callback)
+
         self.listen(event_type, _callback)
 
     async def wait_for(self, event_type: str) -> Event:
@@ -110,21 +116,25 @@ class EventBus:
         lock.clear()
 
         def callback(_event: Event):
-            event['event'] = _event
+            event["event"] = _event
             lock.set()
 
         self.listen_once(event_type, callback)
 
         await lock.wait()
-        return event['event']
+        return event["event"]
 
-    async def dispatch_event_service(self, content: Any, context: Context, event_type: str = ""):
+    async def dispatch_event_service(
+        self, content: Any, context: Context, event_type: str = ""
+    ):
         """dispatch an event on the event bus"""
         if context.authorize(BUS, DISPATCH_EVENT):
             event = Event(event_type, content, context)
             self.dispatch(event)
         else:
-            raise NotAuthorizedError(f'user {context.user} is not allowed to access the bus', context, BUS)
+            raise NotAuthorizedError(
+                f"user {context.user} is not allowed to access the bus", context, BUS
+            )
 
     @property
     def event_stream(self) -> MultisubscriberQueue:

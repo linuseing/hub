@@ -8,9 +8,5 @@ if TYPE_CHECKING:
 
 
 @inject_core
-async def get_entities(core: 'Core', msg: Dict, connection: Connection):
-    connection.send(
-        core.registry.get_entities()
-    )
-
-
+async def get_entities(core: "Core", msg: Dict, connection: Connection):
+    connection.send(core.registry.get_entities())

@@ -1,9 +1,9 @@
-ALL = '*'
+ALL = "*"
 
 # Opts
-WRITE = 'write'
-READ = 'read'
+WRITE = "write"
+READ = "read"
 
 # Core features
-BUS = 'hub.bus'
-DISPATCH_EVENT = 'd'
+BUS = "hub.bus"
+DISPATCH_EVENT = "d"

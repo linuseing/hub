@@ -5,5 +5,5 @@ if TYPE_CHECKING:
 
 
 class Context:
-    def __init__(self, core: 'Core', config: Dict):
+    def __init__(self, core: "Core", config: Dict):
         self.core = core

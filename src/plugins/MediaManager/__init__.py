@@ -16,10 +16,9 @@ if TYPE_CHECKING:
 VOLUME_FACTOR = 3
 
 
-@plugin('MediaManager')
+@plugin("MediaManager")
 class MediaManger:
-
-    def __init__(self, core: 'Core', config: Dict):
+    def __init__(self, core: "Core", config: Dict):
         self.core = core
         self.config = config
 
@@ -30,24 +29,21 @@ class MediaManger:
 
     @run_after_init
     async def init(self):
-        self.tcp_cec = self.core.plugins.get('tcp-cec')
-        self.spotify = self.core.plugins.get('spotify')
+        self.tcp_cec = self.core.plugins.get("tcp-cec")
+        self.spotify = self.core.plugins.get("spotify")
 
     @on(EVENT_PLAYBACK_DEVICE_CHANGE)
     async def turn_on(self, event: Event[Device]):
         device = event.event_content
-        if device.name == 'Kino':
-            print('turning on kino')
-            await self.tcp_cec.out_queue.put(Command(
-                CECCommand.turn_av_on,
-                None
-            ))
+        if device.name == "Kino":
+            print("turning on kino")
+            await self.tcp_cec.out_queue.put(Command(CECCommand.turn_av_on, None))
             await asyncio.sleep(3)
             await self.spotify.set_volume(20, None)
 
-    @bind_to('spotify.volume')
+    @bind_to("spotify.volume")
     async def spotify_volume(self, volume):
         if volume != self._p_v:
             self._p_v = volume
-            print('spotify volume:', int(volume/VOLUME_FACTOR))
-            await self.tcp_cec.set_volume(int(volume/VOLUME_FACTOR))
+            print("spotify volume:", int(volume / VOLUME_FACTOR))
+            await self.tcp_cec.set_volume(int(volume / VOLUME_FACTOR))

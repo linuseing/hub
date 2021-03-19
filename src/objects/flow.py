@@ -4,8 +4,9 @@ from objects.Context import Context
 
 
 class Node:
-
-    def __init__(self, handler, formatter, pass_through=False, next_nodes: List[str] = None):
+    def __init__(
+        self, handler, formatter, pass_through=False, next_nodes: List[str] = None
+    ):
         if next_nodes is None:
             next_nodes = []  # type: List[str]
         self.pass_through = pass_through
@@ -21,9 +22,8 @@ class Node:
 
 
 class Flow:
-
     def __init__(self, name):
-        self.name = ''
+        self.name = ""
         self.suspend_on_error = False
         self._nodes: Dict[str, Node] = {}
         self._trigger: List[Callable] = []
@@ -31,11 +31,11 @@ class Flow:
     async def run(self, payload: Any, context: Context):
         pass
 
-    async def entry_point(self, payload: Any, context: Context): pass
+    async def entry_point(self, payload: Any, context: Context):
+        pass
 
     def add_node(self, name: str, node: Node):
         self._nodes[name] = node
 
     def __repr__(self):
-        return f'<Flow {self.name}>'
-
+        return f"<Flow {self.name}>"

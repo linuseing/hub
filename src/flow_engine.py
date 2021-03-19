@@ -13,8 +13,7 @@ def default_run_context():
 
 
 class FlowEngine:
-
-    def __init__(self, core: 'Core'):
+    def __init__(self, core: "Core"):
         self.core = core
 
         self._flows: Dict[str, Flow] = {}
@@ -23,13 +22,9 @@ class FlowEngine:
         try:
             flow: Optional[Flow] = self._flows[flow]
         except KeyError:
-            raise FlowNotFound(f'flow: {flow}')
+            raise FlowNotFound(f"flow: {flow}")
 
         if not context:
             context = default_run_context()
 
-        self.core.add_job(
-            flow.entry_point,
-            payload,
-            context
-        )
+        self.core.add_job(flow.entry_point, payload, context)

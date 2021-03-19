@@ -6,7 +6,6 @@ from objects.Context import Context
 
 
 class InputService:
-
     def __init__(self, installer: Callable = None, schema: Schema = None):
         self.installer: Callable = installer
         self.schema: Schema = schema
@@ -19,7 +18,9 @@ class InputService:
                 return False
         return True
 
-    def setup(self, callback: Callable, config: dict, context: Context, raise_on_error=True):
+    def setup(
+        self, callback: Callable, config: dict, context: Context, raise_on_error=True
+    ):
 
         if not self.test_config(config):
             raise ConfigError

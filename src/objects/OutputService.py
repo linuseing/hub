@@ -20,13 +20,12 @@ class ServiceDocs:
 
 
 class OutputService:
-
     def __init__(
-            self,
-            handler: Callable,
-            schema: Schema = None,
-            input_validator: Callable = None,
-            doc: Optional[ServiceDocs] = None
+        self,
+        handler: Callable,
+        schema: Schema = None,
+        input_validator: Callable = None,
+        doc: Optional[ServiceDocs] = None,
     ):
         self.handler: Callable = handler
         self.schema: Schema = schema

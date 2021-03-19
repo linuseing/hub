@@ -5,10 +5,10 @@ from objects.component import Component
 class Brightness(Component[int]):
     """"""
 
-    type = 'brightness'
-    gql_type = 'Brightness'
+    type = "brightness"
+    gql_type = "Brightness"
 
-    def __init__(self, configuration, handler, entity, name=''):
+    def __init__(self, configuration, handler, entity, name=""):
         super().__init__(configuration, handler, entity, name)
         self.settings = configuration
         self.handler = handler
@@ -16,9 +16,9 @@ class Brightness(Component[int]):
         self.state = 0
 
         self.methods = {
-            'set': self.set,
-            'increase': self.increase,
-            'decrease': self.decrease
+            "set": self.set,
+            "increase": self.increase,
+            "decrease": self.decrease,
         }
 
     async def set(self, target: float, context) -> float:

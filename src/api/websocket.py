@@ -16,13 +16,12 @@ if TYPE_CHECKING:
 
 
 class WebsocketType(Enum):
-    API = 'api'
+    API = "api"
 
 
 class Connection:
-
-    def __init__(self, core: 'Core', request: web.Request, _id: str = None):
-        self.id = (_id or uuid.uuid4())
+    def __init__(self, core: "Core", request: web.Request, _id: str = None):
+        self.id = _id or uuid.uuid4()
         self.core = core
         self.request = request
 
@@ -32,22 +31,22 @@ class Connection:
         self.is_open = False
 
         self.connection_type = WebsocketType(
-            request.headers.get('Sec-WebSocket-Protocol', 'api')
+            request.headers.get("Sec-WebSocket-Protocol", "api")
         )
 
         self.websocket: web.WebSocketResponse = web.WebSocketResponse(
-            heartbeat=55,
-            protocols=['webui']
+            heartbeat=55, protocols=["webui"]
         )
 
     async def prepare(self):
         await self.websocket.prepare(self.request)
         self.is_open = True
-        self.core.bus.dispatch(Event(NEW_WEBSOCKET_CONNECTION, {
-            'id': self.id,
-            'type': self.connection_type,
-            'connection': self
-        }))
+        self.core.bus.dispatch(
+            Event(
+                NEW_WEBSOCKET_CONNECTION,
+                {"id": self.id, "type": self.connection_type, "connection": self},
+            )
+        )
 
         self.core.add_job(self.reader)
         await self.writer()
@@ -60,19 +59,15 @@ class Connection:
             try:
                 message = await self.websocket.receive()
                 if message.type == web.WSMsgType.CLOSE:
-                    print('closing')
+                    print("closing")
                     break  # TODO: closing
                 elif message.type == web.WSMsgType.PING:
                     pass  # TODO: Pong
                 elif message.type == web.WSMsgType.TEXT:
                     print(message.data)
                     handler = self.core.api.get_ws_handler(str(message.data))
-                    self.core.add_job(
-                        handler,
-                        message,
-                        self
-                    )
-                    pass # TODO: handling
+                    self.core.add_job(handler, message, self)
+                    pass  # TODO: handling
             except:
                 pass
 
@@ -85,16 +80,17 @@ class Connection:
             else:
                 await self.websocket.send_json(next_message, dumps=default_encoder)
 
-    def close(self): pass
+    def close(self):
+        pass
 
 
 class WebsocketEndpoint(RESTEndpoint):
-    url = '/api/ws'
+    url = "/api/ws"
 
     @inject_core
-    async def get(self, core: 'Core', request):
+    async def get(self, core: "Core", request):
         await Connection(core, request).prepare()
 
     @inject_core
-    async def post(self, core: 'Core', request):
-        return self.json({'version': core.version})
+    async def post(self, core: "Core", request):
+        return self.json({"version": core.version})

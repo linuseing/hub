@@ -27,7 +27,7 @@ class JSONInterface(TypedDict):
     methods: List[str]
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Component(Generic[T]):
@@ -35,30 +35,34 @@ class Component(Generic[T]):
     settings: Dict[str, any]
     state: T
     type: str
-    gql_type = ''
+    gql_type = ""
 
-    def __init__(self, configuration: dict, handler: Callable, entity: 'Entity', name: str = None):
+    def __init__(
+        self, configuration: dict, handler: Callable, entity: "Entity", name: str = None
+    ):
         self.handler = handler
         if not name:
             name = self.type
         self.name = name
-        self.dotted = f'{entity.name}.{name}'
+        self.dotted = f"{entity.name}.{name}"
 
     def to_json(self) -> JSONInterface:
         return {
-            'name': self.name,
-            'type': self.type,
-            'address': self.dotted,
-            'state': self.state,
-            'methods': list(self.methods.keys())
+            "name": self.name,
+            "type": self.type,
+            "address": self.dotted,
+            "state": self.state,
+            "methods": list(self.methods.keys()),
         }
 
     def gql(self) -> GQLInterface:
         return {
-            '__typename': self.gql_type,
-            'name': self.name,
-            'type': self.type,
-            'address': self.dotted,
-            'state': self.state if type(self.state) in BASE_TYPES else default_encoder(self.state),
-            'methods': list(self.methods.keys())
+            "__typename": self.gql_type,
+            "name": self.name,
+            "type": self.type,
+            "address": self.dotted,
+            "state": self.state
+            if type(self.state) in BASE_TYPES
+            else default_encoder(self.state),
+            "methods": list(self.methods.keys()),
         }

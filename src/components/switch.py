@@ -6,19 +6,19 @@ from typing import Callable, Dict
 
 class Switch(Component[bool]):
 
-    type = 'switch'
-    gql_type = 'Switch'
+    type = "switch"
+    gql_type = "Switch"
 
-    def __init__(self, configuration: Dict, handler: Callable, entity, name=''):
+    def __init__(self, configuration: Dict, handler: Callable, entity, name=""):
         super().__init__(configuration, handler, entity, name)
         self.handler = handler
         self.settings = configuration
         self.state = False
         self.methods = {
-            'set': self.set,
-            'turn_on': self.turn_on,
-            'turn_off': self.turn_off,
-            'toggle': self.toggle,
+            "set": self.set,
+            "turn_on": self.turn_on,
+            "turn_off": self.turn_off,
+            "toggle": self.toggle,
         }
 
     async def set(self, target, context):

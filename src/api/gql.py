@@ -15,7 +15,7 @@ from .gql_constants import *
 if TYPE_CHECKING:
     from core import Core
 
-VERSION = '0.1'
+VERSION = "0.1"
 
 
 class GraphAPI:
@@ -23,7 +23,7 @@ class GraphAPI:
     subscription = SubscriptionType()
     mutations = MutationType()
 
-    def __init__(self, core: 'Core'):
+    def __init__(self, core: "Core"):
         self.core = core
         self.type_defs = load_schema_from_path(f"{core.location}/api/schema/")
 
@@ -31,8 +31,13 @@ class GraphAPI:
         self.query.set_field(PLUGIN_VERSION, lambda *_: VERSION)
         self.query.set_field(PLUGINS, lambda *_: list(core.plugins.keys()))
         self.query.set_field(VALUE, self.get_value)
-        self.query.set_field(AVAILABLE_COMPONENTS, lambda *_: list(core.registry.components.keys()))
-        self.query.set_field(AVAILABLE_FORMATTER, lambda *_: list(map(lambda x: x.gql(), core.io.formatter)))
+        self.query.set_field(
+            AVAILABLE_COMPONENTS, lambda *_: list(core.registry.components.keys())
+        )
+        self.query.set_field(
+            AVAILABLE_FORMATTER,
+            lambda *_: list(map(lambda x: x.gql(), core.io.formatter)),
+        )
 
         self.query.set_field(ENTITY, self.get_entity)
         self.query.set_field(ENTITIES, self.get_entities)
@@ -49,8 +54,14 @@ class GraphAPI:
         self.mutations.set_field(SET_COMPONENT, self.set_mutation)
 
     async def setup(self):
-        schema = make_executable_schema(self.type_defs, self.query, self.subscription, self.mutations)
-        app = CORSMiddleware(GraphQL(schema), allow_origins=['*'], allow_methods=("GET", "POST", "OPTIONS"))
+        schema = make_executable_schema(
+            self.type_defs, self.query, self.subscription, self.mutations
+        )
+        app = CORSMiddleware(
+            GraphQL(schema),
+            allow_origins=["*"],
+            allow_methods=("GET", "POST", "OPTIONS"),
+        )
         await serve(app, Config())
 
     def get_entity(self, _, __, name: str):
@@ -61,21 +72,21 @@ class GraphAPI:
         entities = self.core.registry.get_entities()
         return map(lambda e: e.gql(), entities.values())
 
-    def get_value(self, *_, key=''):
+    def get_value(self, *_, key=""):
         v = self.core.storage.get_value(key)
         return v if v in BASE_TYPES else default_encoder(v)
 
-    async def entity_subscription_source(self, *_, name=''):
+    async def entity_subscription_source(self, *_, name=""):
         async for entity in self.core.registry.state_queue.subscribe():
             if entity.name != name:
                 continue
             yield entity.gql()
 
     @staticmethod
-    def entity_subscription(entity, *_, name=''):
+    def entity_subscription(entity, *_, name=""):
         return entity
 
-    async def value_subscription_source(self, *_, key=''):
+    async def value_subscription_source(self, *_, key=""):
         print(key)
         async for value in self.core.storage.subscribe(key):
             if type(value) not in BASE_TYPES:
@@ -83,7 +94,7 @@ class GraphAPI:
             yield value
 
     @staticmethod
-    def value_subscription(value, *_, key=''):
+    def value_subscription(value, *_, key=""):
         return value
 
     @staticmethod
@@ -95,5 +106,7 @@ class GraphAPI:
             yield event.gql()
 
     def set_mutation(self, _, info, entity, component, target):
-        self.core.registry.call_method(entity, component, 'set', target, context=Context.admin(external=True))
+        self.core.registry.call_method(
+            entity, component, "set", target, context=Context.admin(external=True)
+        )
         return True

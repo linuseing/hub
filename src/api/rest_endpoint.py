@@ -8,7 +8,7 @@ from helper.json_encoder import default_encoder
 
 
 def inject_core(func):
-    setattr(func, 'inject_core', True)
+    setattr(func, "inject_core", True)
     return func
 
 
@@ -19,7 +19,8 @@ class RESTEndpoint:
     Handler may return a json response with self.json(), a web.Response or web.StreamResponse object
     or a string which will be converted to a web.Response
     """
-    url: str = ''
+
+    url: str = ""
 
     def register(self, router: web.UrlDispatcher):
         """
@@ -71,8 +72,8 @@ def handler_factory(handler: Callable):
         result = None
 
         try:
-            if getattr(handler, 'inject_core', False):
-                result = handler(request.app['_core'], request, **request.match_info)
+            if getattr(handler, "inject_core", False):
+                result = handler(request.app["_core"], request, **request.match_info)
             else:
                 result = handler(request, **request.match_info)
 

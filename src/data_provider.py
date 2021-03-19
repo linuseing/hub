@@ -6,7 +6,7 @@ from asyncio_multisubscriber_queue import MultisubscriberQueue
 if TYPE_CHECKING:
     from core import Core
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class DataEntry(Generic[T]):
@@ -17,7 +17,7 @@ class DataEntry(Generic[T]):
         self.queue = MultisubscriberQueue()
 
 
-X = TypeVar('X')
+X = TypeVar("X")
 
 
 class Setter(Generic[X]):
@@ -35,8 +35,7 @@ class Setter(Generic[X]):
 
 
 class Storage:
-
-    def __init__(self, core: 'Core'):
+    def __init__(self, core: "Core"):
         self.core = core
 
         self.storage: defaultdict[str, DataEntry] = defaultdict(lambda: DataEntry(), {})
@@ -45,15 +44,9 @@ class Storage:
         if self.get_value(key) is not value:
             self.storage[key].value = value
             for callback in self.storage[key].subscriber:
-                self.core.add_job(
-                    callback,
-                    value
-                )
+                self.core.add_job(callback, value)
 
-            self.core.add_job(
-                self.storage[key].queue.put,
-                value
-            )
+            self.core.add_job(self.storage[key].queue.put, value)
 
     def get_value(self, key):
         """
@@ -88,7 +81,9 @@ class Storage:
             self.core.add_job(callback, self.storage[key].value)
         return unregister
 
-    def register_conditional_callback(self, key: str, callback: Callable, condition: Callable):
+    def register_conditional_callback(
+        self, key: str, callback: Callable, condition: Callable
+    ):
         """
         Registers a conditional callback
         :param key: group of the data entry

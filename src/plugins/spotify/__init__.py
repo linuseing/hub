@@ -16,44 +16,28 @@ if TYPE_CHECKING:
 
 
 def playback_stopped_event(track: Optional[asp.track.FullTrack]):
-    return Event(
-        event_type=EVENT_PLAYBACK_STOPPED,
-        event_content=track
-    )
+    return Event(event_type=EVENT_PLAYBACK_STOPPED, event_content=track)
 
 
 def playback_resumed_event(track: asp.track.FullTrack):
-    return Event(
-        event_type=EVENT_PLAYBACK_RESUMED,
-        event_content=track
-    )
+    return Event(event_type=EVENT_PLAYBACK_RESUMED, event_content=track)
 
 
 def playback_started_event(track: asp.track.FullTrack):
-    return Event(
-        event_type=EVENT_PLAYBACK_STARTED,
-        event_content=track
-    )
+    return Event(event_type=EVENT_PLAYBACK_STARTED, event_content=track)
 
 
 def track_change_event(track: asp.track.FullTrack):
-    return Event(
-        event_type=EVENT_TRACK_CHANGE,
-        event_content=track
-    )
+    return Event(event_type=EVENT_TRACK_CHANGE, event_content=track)
 
 
 def playback_device_change(device: asp.Device):
-    return Event(
-        event_type=EVENT_PLAYBACK_DEVICE_CHANGE,
-        event_content=device
-    )
+    return Event(event_type=EVENT_PLAYBACK_DEVICE_CHANGE, event_content=device)
 
 
-@plugin('spotify')
+@plugin("spotify")
 class Spotify:
-
-    def __init__(self, core: 'Core', config: Dict):
+    def __init__(self, core: "Core", config: Dict):
         self.core = core
         self.config = config
         print(config)
@@ -76,17 +60,29 @@ class Spotify:
 
         self._is_playing = None
 
-        self.is_playing = core.storage.setter_factory('spotify.playing')
+        self.is_playing = core.storage.setter_factory("spotify.playing")
 
-        self.track: Setter[asp.FullTrack] = core.storage.setter_factory('spotify.track')
-        self.progress: Setter[int] = core.storage.setter_factory('spotify.progress')
-        self.artist: Setter[asp.FullArtist] = core.storage.setter_factory('spotify.artist')
-        self.devices: Setter[asp.Device] = core.storage.setter_factory('spotify.devices')
-        self.playlist_names: Setter[List[str]] = core.storage.setter_factory('spotify.playlists')
-        self.volume: Setter[int] = core.storage.setter_factory('spotify.volume')
-        self.current_playback_device: Setter[asp.Device] = core.storage.setter_factory('spotify.current_playback_device')
-        self.current_context: Setter[asp.CurrentlyPlayingContext] = core.storage.setter_factory('spotify.current_context')
-        self.audio_features: Setter[asp.AudioFeatures] = core.storage.setter_factory('spotify.track.audio_features')
+        self.track: Setter[asp.FullTrack] = core.storage.setter_factory("spotify.track")
+        self.progress: Setter[int] = core.storage.setter_factory("spotify.progress")
+        self.artist: Setter[asp.FullArtist] = core.storage.setter_factory(
+            "spotify.artist"
+        )
+        self.devices: Setter[asp.Device] = core.storage.setter_factory(
+            "spotify.devices"
+        )
+        self.playlist_names: Setter[List[str]] = core.storage.setter_factory(
+            "spotify.playlists"
+        )
+        self.volume: Setter[int] = core.storage.setter_factory("spotify.volume")
+        self.current_playback_device: Setter[asp.Device] = core.storage.setter_factory(
+            "spotify.current_playback_device"
+        )
+        self.current_context: Setter[
+            asp.CurrentlyPlayingContext
+        ] = core.storage.setter_factory("spotify.current_context")
+        self.audio_features: Setter[asp.AudioFeatures] = core.storage.setter_factory(
+            "spotify.track.audio_features"
+        )
 
     @run_after_init
     async def setup(self):
@@ -117,9 +113,7 @@ class Spotify:
                 except AttributeError:
                     self.current_playback_device.value = self.context.device
                     print(self.current_playback_device.value)
-                    self.core.bus.dispatch(
-                        playback_device_change(self.context.device)
-                    )
+                    self.core.bus.dispatch(playback_device_change(self.context.device))
 
                 # updating track state and dispatching events accordingly
                 await self._update_track()
@@ -130,17 +124,17 @@ class Spotify:
         except:
             pass
 
-    @output_service('spotify.play', None, None)
+    @output_service("spotify.play", None, None)
     async def play(self, *_):
         """Continues playback"""
         await self.client.player_play()
 
-    @output_service('spotify.pause', None, None)
+    @output_service("spotify.pause", None, None)
     async def pause(self, *_):
         """Pauses playback"""
         await self.client.player_pause()
 
-    @output_service('spotify.toggle', None, None)
+    @output_service("spotify.toggle", None, None)
     async def toggle_playback(self, *_):
         """Toggles playback (pause->play/play->pause)"""
         if self.context.is_playing:
@@ -148,32 +142,32 @@ class Spotify:
         else:
             await self.play()
 
-    @output_service('spotify.next', None, None)
+    @output_service("spotify.next", None, None)
     async def next_song(self, *_):
         """skips to th next song"""
         await self.client.player_next()
 
-    @output_service('spotify.previous', None, None)
+    @output_service("spotify.previous", None, None)
     async def previous_song(self, *_):
         """goes back to the previous song"""
         await self.client.player_prev()
 
-    @output_service('spotify.set_shuffle', None, None)
+    @output_service("spotify.set_shuffle", None, None)
     async def shuffle(self, shuffle: bool, *_):
         """Turns shuffle on or off"""
         await self.client.player_shuffle(shuffle)
 
-    @output_service('spotify.volume.set', None, None)
+    @output_service("spotify.volume.set", None, None)
     async def volume(self, volume: int, *_):
         """set volume"""
         await self.client.player_volume(volume)
 
-    @output_service('spotify.track.seek', None, None)
+    @output_service("spotify.track.seek", None, None)
     async def seek(self, pos: int, *_):
         """go to track position in seconds"""
         await self.client.player_seek(pos * 1000)
 
-    @output_service('spotify.start_playlist', None, None)
+    @output_service("spotify.start_playlist", None, None)
     async def play_playlist(self, playlist, _, shuffle=True):
         """play playlist"""
         await self.shuffle(shuffle)
@@ -183,24 +177,24 @@ class Spotify:
     async def play_track(self, track):
         pass
 
-    @output_service('spotify.volume.increase', None, None)
+    @output_service("spotify.volume.increase", None, None)
     async def increase_volume(self, amount: int, *_):
         """increases volume (percent)"""
         await self.set_volume(amount, _, relative=True)
 
-    @output_service('spotify.volume.decrease', None, None)
+    @output_service("spotify.volume.decrease", None, None)
     async def decrease_volume(self, amount: int, *_):
         """decreases volume (percent)"""
         await self.set_volume(-amount, _, relative=True)
 
-    @output_service('spotify.volume.set_relative', None, None)
+    @output_service("spotify.volume.set_relative", None, None)
     async def set_volume(self, target, _, relative=False):
         """changes volume, relative to current volume"""
         if relative:
             target = self.context.device.volume_percent + target
         await self.client.player_volume(target)
 
-    @output_service('spotify.playback.set_device', None, None)
+    @output_service("spotify.playback.set_device", None, None)
     async def select_device(self, device, *_):
         """switch playback device"""
         device_id = self.devices[device]
@@ -215,19 +209,15 @@ class Spotify:
         if self.context.track is None and self.currently_playing is not None:
             self.currently_playing = None
             self.is_playing.value = False
-            self.core.bus.dispatch(playback_stopped_event(
-                self.currently_playing
-            ))
+            self.core.bus.dispatch(playback_stopped_event(self.currently_playing))
         elif self.context.track is None and self.currently_playing is None:
             return
         elif (
-                self.currently_playing is None
-                or getattr(self.currently_playing, "name", "") != self.context.track.name
+            self.currently_playing is None
+            or getattr(self.currently_playing, "name", "") != self.context.track.name
         ):
             self.currently_playing: Optional[FullTrack] = self.context.track
-            self.core.bus.dispatch(track_change_event(
-                self.currently_playing
-            ))
+            self.core.bus.dispatch(track_change_event(self.currently_playing))
             self.is_playing.value = True
             self.track.value = self.currently_playing.name
             self.artist.value = self.currently_playing.artists
@@ -245,18 +235,16 @@ class Spotify:
             self._is_playing = self.context.is_playing
             if self._is_playing:
                 self.is_playing.value = True
-                self.core.bus.dispatch(playback_resumed_event(
-                    self.currently_playing
-                ))
+                self.core.bus.dispatch(playback_resumed_event(self.currently_playing))
             else:
                 self.is_playing.value = False
-                self.core.bus.dispatch(playback_stopped_event(
-                    self.currently_playing
-                ))
+                self.core.bus.dispatch(playback_stopped_event(self.currently_playing))
 
         if self.context.track is not None:
             self.progress.value = int(
-                self.context.progress.total_seconds() / self.context.track.duration.total_seconds() * 100
+                self.context.progress.total_seconds()
+                / self.context.track.duration.total_seconds()
+                * 100
             )
 
     async def _update_devices(self):

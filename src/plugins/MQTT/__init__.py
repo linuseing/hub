@@ -10,12 +10,11 @@ from .constants import *
 
 
 # scopes
-PUBLISH = 'mqtt.publish'
+PUBLISH = "mqtt.publish"
 
 
-@plugin('mqtt')
+@plugin("mqtt")
 class MQTT:
-
     def __init__(self, core, config: Dict = {}):
         self.core = core
         self.broker = (config["server_ip"], config["port"])
@@ -24,9 +23,7 @@ class MQTT:
         self.event = asyncio.Event(loop=core.event_loop)
         self.event.clear()
 
-        self.client: Client() = Client(
-            (config["client_id"] or DEFAULT_NAME)
-        )
+        self.client: Client() = Client((config["client_id"] or DEFAULT_NAME))
 
         if config["username"] is not None:
             self.client.username_pw_set(config["username"], config["password"])
@@ -51,10 +48,7 @@ class MQTT:
         return lambda: self.subscriptions[topic].remove(callback)
 
     def new_context(self, topic: str):
-        return Context(
-            User.new_admin(),
-            remote=True
-        )
+        return Context(User.new_admin(), remote=True)
 
     def message_handler(self, msg: MQTTMessage):
         subscriber: List[Callable] = self.subscriptions.get(msg.topic, [])
@@ -63,13 +57,9 @@ class MQTT:
         context = self.new_context(msg.topic)
 
         for callback in subscriber:
-            self.core.add_job(
-                callback,
-                msg,
-                context
-            )
+            self.core.add_job(callback, msg, context)
 
-    @input_service('mqtt.subscribe', None)
+    @input_service("mqtt.subscribe", None)
     def subscribe(self, callback: Callable, topic: str, qos=0):
         """
         Subscribe to a topic
@@ -78,35 +68,24 @@ class MQTT:
         :param qos:
         :return:
         """
-        self.core.add_job(
-            self.async_subscribe,
-            topic,
-            qos
-        )
+        self.core.add_job(self.async_subscribe, topic, qos)
         return self.add_subscription_callback(topic, callback)
 
-    async def async_subscribe(self, topic: str, qos=0, callback: Optional[Callable] = None):
+    async def async_subscribe(
+        self, topic: str, qos=0, callback: Optional[Callable] = None
+    ):
         await self.event.wait()
-        self.core.add_job(
-            self.client.subscribe,
-            topic,
-            qos
-        )
+        self.core.add_job(self.client.subscribe, topic, qos)
         if callback:
             return self.add_subscription_callback(topic, callback)
 
     def publish(self, payload: Any, context: Context, topic: str, qos=0, retain=True):
-        self.core.add_job(
-            self.async_publish,
-            payload,
-            context,
-            topic,
-            qos,
-            retain
-        )
+        self.core.add_job(self.async_publish, payload, context, topic, qos, retain)
 
-    @output_service('mqtt.publish', None, None)
-    async def async_publish(self, payload: Any, context: Context, topic: str, qos=0, retain=True):
+    @output_service("mqtt.publish", None, None)
+    async def async_publish(
+        self, payload: Any, context: Context, topic: str, qos=0, retain=True
+    ):
         """
         Publish a message over MQTT
         :param payload: msg payload
@@ -116,12 +95,6 @@ class MQTT:
         :param retain: retain
         :return:
         """
-        if context.authorize(PUBLISH, '*'):
+        if context.authorize(PUBLISH, "*"):
             await self.event.wait()
-            self.core.add_job(
-                self.client.publish,
-                topic,
-                payload,
-                qos,
-                retain
-            )
+            self.core.add_job(self.client.publish, topic, payload, qos, retain)

@@ -2,10 +2,10 @@ from enum import Enum
 
 
 class EntityType(Enum):
-    LAMP = 'Lamp'
-    LAMP_RGB = 'Lamp-rgb'
-    LAMP_BRIGHTNESS = 'Lamp-dimmable'
-    COMPOSED = 'COMPOSED'
+    LAMP = "Lamp"
+    LAMP_RGB = "Lamp-rgb"
+    LAMP_BRIGHTNESS = "Lamp-dimmable"
+    COMPOSED = "COMPOSED"
 
     @classmethod
     def types(cls):

@@ -9,17 +9,15 @@ import pytz as pytz
 if TYPE_CHECKING:
     from core import Core
 
-
 UTC = pytz.UTC
 
 
 class Timer:
-
-    def __init__(self, core: 'Core', tz=UTC):
+    def __init__(self, core: "Core", tz=UTC):
         self._tasks = {}
         self._id_counter = 0
         self.time_zone = tz
-        self.core: 'Core' = core
+        self.core: "Core" = core
 
     def scheduled_call(self, cb, delay=None, target_time: datetime.datetime = None):
         """
@@ -39,7 +37,7 @@ class Timer:
         return self.core.event_loop.call_later(
             slp_seconds, lambda: self.core.add_job(cb, target)
         )
-    
+
     def daily(self, cb, run_time: datetime.datetime):
         """
         schedules a task to be called on a daily base.

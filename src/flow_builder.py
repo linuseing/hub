@@ -41,19 +41,17 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
         service: str = (
             node_conf if type(node_conf) is str else list(node_conf.items())[0][0]
         )
-        if service.startswith('f_'):
-            handler = core.io.get_formatter(service.strip('f_'))
-            if settings[PASS_THROUGH_BEHAVIOR] in [PASS_THROUGH_EXCEPT_FORMATTER, PASS_THROUGH_NEVER]:
+        if service.startswith("f_"):
+            handler = core.io.get_formatter(service.strip("f_"))
+            if settings[PASS_THROUGH_BEHAVIOR] in [
+                PASS_THROUGH_EXCEPT_FORMATTER,
+                PASS_THROUGH_NEVER,
+            ]:
                 pass_through = False
         else:
             handler = core.io.build_handler(service, list(node_conf.values())[0])
 
-        node = Node(
-            handler,
-            None,
-            pass_through,
-            next_nodes=[str(node_id+1)]
-        )
+        node = Node(handler, None, pass_through, next_nodes=[str(node_id + 1)])
 
         flow.add_node(str(node_id), node)
 

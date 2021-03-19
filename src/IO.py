@@ -27,21 +27,20 @@ class Formatter:
 
     def gql(self):
         return {
-            'name': self.docs['name'],
-            'inType': str(self.docs['in_type']),
-            'outType': str(self.docs['out_type']),
-            'config': self.docs['config']
+            "name": self.docs["name"],
+            "inType": str(self.docs["in_type"]),
+            "outType": str(self.docs["out_type"]),
+            "config": self.docs["config"],
         }
 
 
 class IO:
-
-    def __init__(self, core: 'Core'):
+    def __init__(self, core: "Core"):
         """
         Default IO implementation for the HUB.
         :param core: the hub root object
         """
-        self.core: 'Core' = core
+        self.core: "Core" = core
 
         self._input_services: Dict[str, InputService] = {}
         self._output_services: Dict[str, OutputService] = {}
@@ -52,22 +51,25 @@ class IO:
 
     def load_formatter(self):
         import config.formatter as formatter
+
         for module in package_loader.import_submodules(formatter).values():
             module_name = module.__name__[17:]
             for function_name, function in getmembers(module, isfunction):
-                if getattr(function, 'export', False):
+                if getattr(function, "export", False):
                     formatter = Formatter(
                         handler=function,
                         docs={
-                            'in_type': getattr(function, 'in_type', Any),
-                            'out_type': getattr(function, 'out_type', Any),
-                            'config': getattr(function, 'config', {}),
-                            'name': f'{module_name}.{function_name}'
-                        }
+                            "in_type": getattr(function, "in_type", Any),
+                            "out_type": getattr(function, "out_type", Any),
+                            "config": getattr(function, "config", {}),
+                            "name": f"{module_name}.{function_name}",
+                        },
                     )
-                    self._formatter[f'{module_name}.{function_name}'] = formatter
+                    self._formatter[f"{module_name}.{function_name}"] = formatter
 
-    def has_service(self, service_type: Union[OutputService, InputService], service: str) -> bool:
+    def has_service(
+        self, service_type: Union[OutputService, InputService], service: str
+    ) -> bool:
         try:
             if type(service_type) is OutputService:
                 self._output_services.get(service)
@@ -86,22 +88,20 @@ class IO:
     def add_input_service(self, name: str, service: InputService):
         self._input_services[name] = service
 
-    def setup_input(self, service_name: str, config: dict, callback: Callable, context: Context) -> Callable:
+    def setup_input(
+        self, service_name: str, config: dict, callback: Callable, context: Context
+    ) -> Callable:
         service = self.get_input_service(service_name)
         if not service.test_config(config):
             raise ConfigError
-        return service.setup( callback, config, context)
+        return service.setup(callback, config, context)
 
     def run_service(self, service_name: str, out: Any, config: dict, context: Context):
-        self.core.add_job(
-            self.async_run_service,
-            service_name,
-            config,
-            out,
-            context
-        )
+        self.core.add_job(self.async_run_service, service_name, config, out, context)
 
-    async def async_run_service(self, service_name: str, config: dict, out: Any, context: Context):
+    async def async_run_service(
+        self, service_name: str, config: dict, out: Any, context: Context
+    ):
         service = self.get_output_service(service_name)
         if not service.test_config(config):
             raise ConfigError
@@ -120,7 +120,9 @@ class IO:
         except KeyError:
             raise ServiceNotFoundError
 
-    def build_handler(self, service_name: str, config: Dict, formatter: Optional[str]) -> Callable:
+    def build_handler(
+        self, service_name: str, config: Dict, formatter: Optional[str]
+    ) -> Callable:
         """
         Builds an output handler from a service name and configuration
         :param service_name:

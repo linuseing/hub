@@ -14,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class API:
-
-    def __init__(self, core: 'Core'):
+    def __init__(self, core: "Core"):
         self.core = core
 
         self.gql = GraphAPI(core)
@@ -35,15 +34,12 @@ class API:
             },
         )
 
-        self.app['_core'] = core
+        self.app["_core"] = core
 
-        self.core.add_job(
-            self.start,
-            8080
-        )
+        self.core.add_job(self.start, 8080)
 
         self.register_endpoint(WebsocketEndpoint)
-        self.register_websocket_command_handler('get_entities', get_entities)
+        self.register_websocket_command_handler("get_entities", get_entities)
 
     def register_endpoint(self, endpoint: Type[RESTEndpoint]):
         endpoint().register(self.app.router)
@@ -56,21 +52,21 @@ class API:
         return self._ws_command_handler[command]
 
     def register_websocket_command_handler(self, command: str, handler: Callable):
-        if getattr(handler, 'inject_core', False):
+        if getattr(handler, "inject_core", False):
+
             async def _handler(msg, connection):
                 await handler(self.core, msg, connection)
+
             self._ws_command_handler[command] = _handler
         else:
             self._ws_command_handler[command] = handler
 
     async def start(self, port):
-        self.core.add_job(
-            self.gql.setup
-        )
+        self.core.add_job(self.gql.setup)
         self.app._router.freeze = lambda: None
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
-        self.site = web.TCPSite(self.runner, '127.0.0.1', port)
+        self.site = web.TCPSite(self.runner, "127.0.0.1", port)
         try:
             await self.site.start()
         except Exception as e:

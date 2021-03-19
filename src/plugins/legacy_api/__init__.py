@@ -9,15 +9,13 @@ if TYPE_CHECKING:
 
 
 @websocket_handler
-async def subscribe_to_event(core: 'Core', connection, msg):
+async def subscribe_to_event(core: "Core", connection, msg):
     event_type = msg["event"]
 
     async def cb(event):
-        connection.send(event_message(msg['id'], event))
+        connection.send(event_message(msg["id"], event))
 
-    connection.subscription_handler.append(
-        core.bus.listen(event_type, cb)
-    )
+    connection.subscription_handler.append(core.bus.listen(event_type, cb))
     connection.send(success(msg["id"]))
 
 
@@ -25,10 +23,14 @@ async def subscribe_to_event(core: 'Core', connection, msg):
 async def subscribe_to_entities(core, connection, msg):
     def update_cb(event):
         if event.content["origin"] != f"webUI-{connection.id}":
-            connection.send(entity_updated_message(msg["id"], event.event_content["entity"]))
+            connection.send(
+                entity_updated_message(msg["id"], event.event_content["entity"])
+            )
 
     def created_cb(event):
-        connection.send(entity_created_message(msg["id"], event.event_content["entity"]))
+        connection.send(
+            entity_created_message(msg["id"], event.event_content["entity"])
+        )
 
     entities = list(core.registry.get_entities().values())
     for entity in entities:
@@ -48,9 +50,8 @@ async def call_service(core, connection, msg):
         connection.send(error(msg["id"], e))
 
 
-@plugin('legacy-api')
+@plugin("legacy-api")
 class LegacyAPI:
-
-    def __init__(self, core: 'Core', config: Dict):
+    def __init__(self, core: "Core", config: Dict):
         self.core = core
         self.config = config

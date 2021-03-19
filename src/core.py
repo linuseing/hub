@@ -20,12 +20,12 @@ from timer import Timer
 
 
 def is_blocking(job):
-    return getattr(job, 'is_blocking', False)
+    return getattr(job, "is_blocking", False)
 
 
 class Core:
 
-    version = '0.1'
+    version = "0.1"
 
     def __init__(self, event_loop=None):
         """Hub core object"""
@@ -34,7 +34,9 @@ class Core:
 
         self.location = os.path.dirname(__file__)
         self._state = CoreState.RUNNING
-        self._lifecycle_hooks: Dict[CoreState, List[Callable]] = {key: [] for key in CoreState}
+        self._lifecycle_hooks: Dict[CoreState, List[Callable]] = {
+            key: [] for key in CoreState
+        }
 
         self.plugins: Dict = {}
 
@@ -49,24 +51,26 @@ class Core:
 
         self.core_state = CoreState.RUNNING
 
-        self.add_job(
-            self.cio
-        )
+        self.add_job(self.cio)
 
     async def cio(self):
         while True:
             with suppress(Exception):
                 _input = await ainput()
-                args = _input.split(' ')
-                if args[0] in ['run', 'r']:
+                args = _input.split(" ")
+                if args[0] in ["run", "r"]:
                     if len(args) == 4:
                         config = ast.literal_eval(args[3])
                     else:
                         config = {}
-                    self.io.run_service(args[1], ast.literal_eval(args[2]), config, Context.admin())
-                elif args[0] in ['set', 's']:
-                    self.registry.call_method_d(f'{args[1]}.set', ast.literal_eval(args[2]), Context.admin())
-                elif args[0] in ['dispatch', 'd']:
+                    self.io.run_service(
+                        args[1], ast.literal_eval(args[2]), config, Context.admin()
+                    )
+                elif args[0] in ["set", "s"]:
+                    self.registry.call_method_d(
+                        f"{args[1]}.set", ast.literal_eval(args[2]), Context.admin()
+                    )
+                elif args[0] in ["dispatch", "d"]:
                     self.bus.dispatch(Event(args[1], ast.literal_eval(args[2])))
 
     def add_plugin(self, name: str, plugin: Any):
@@ -98,6 +102,6 @@ class Core:
     @core_state.setter
     def core_state(self, state: CoreState):
         self._state = state
-        print(f'going to {state}')
+        print(f"going to {state}")
         for callback in self._lifecycle_hooks[state]:
             self.add_job(callback)

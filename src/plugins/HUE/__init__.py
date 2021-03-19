@@ -13,10 +13,9 @@ if TYPE_CHECKING:
     from core import Core
 
 
-@plugin('hue')
+@plugin("hue")
 class HUE:
-
-    def __init__(self, core: 'Core', config: Dict[str, Any]):
+    def __init__(self, core: "Core", config: Dict[str, Any]):
         self.core = core
         self.config = config
 
@@ -25,7 +24,9 @@ class HUE:
         self._sensor_states = {}
         self._lights = {}
 
-        self._sensor_listeners: Dict[str, Dict[str, List[Callable]]] = defaultdict(lambda: {}, {})
+        self._sensor_listeners: Dict[str, Dict[str, List[Callable]]] = defaultdict(
+            lambda: {}, {}
+        )
 
     @run_after_init
     async def setup(self):
@@ -40,14 +41,14 @@ class HUE:
 
         self.core.timer.periodic_job(self.config[POLL_INTERVAL], self.update)
 
-    @output_service('hue.set')
+    @output_service("hue.set")
     async def set_state(self, target, context: Context, device: str):
         if type(target) is bool:
             await self._lights[device].set_state(on=target)
         elif type(target) in [int, float]:
             await self._lights[device].set_state(on=True, bri=target)
 
-    @input_service('hue.sensor')
+    @input_service("hue.sensor")
     def setup_remote(self, callback: Callable, sensor: str, event="all"):
         if event in self._sensor_listeners[sensor]:
             self._sensor_listeners[sensor][event].append(callback)
@@ -64,12 +65,16 @@ class HUE:
                     type(sensor) is aiohue.sensors.ZLLSwitchSensor
                     and sensor.state != self._sensor_states[sensor.name]
                 ):
-                    listener = self._sensor_listeners.get(sensor.name, {}).get("all", [])
+                    listener = self._sensor_listeners.get(sensor.name, {}).get(
+                        "all", []
+                    )
                     listener += self._sensor_listeners.get(sensor.name, {}).get(
                         sensor.state["buttonevent"], []
                     )
                     for cb in listener:
-                        self.core.add_job(cb, sensor.state["buttonevent"], Context.admin())
+                        self.core.add_job(
+                            cb, sensor.state["buttonevent"], Context.admin()
+                        )
                     self._sensor_states[sensor.name] = sensor.state
                     print(sensor.state)
         except Exception as e:
@@ -77,7 +82,9 @@ class HUE:
 
     async def connect(self):
         self.bridge = aiohue.Bridge(
-            self.config["host"], username=self.config[USERNAME], websession=aiohttp.ClientSession()
+            self.config["host"],
+            username=self.config[USERNAME],
+            websession=aiohttp.ClientSession(),
         )
         try:
             if not self.config[USERNAME]:

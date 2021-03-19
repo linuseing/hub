@@ -5,7 +5,7 @@ class Context:
     """Represents the context in which actions like events happen."""
 
     def __init__(self, user: User = None, remote: bool = False) -> None:
-        self.user: User = (user or User.new())
+        self.user: User = user or User.new()
         self.remote = remote
 
     def authorize(self, scope, permission) -> bool:
@@ -16,12 +16,9 @@ class Context:
         return f'<Context {self.user} | {"remote" if self.remote else "internal"}>'
 
     @staticmethod
-    def default() -> 'Context':
+    def default() -> "Context":
         return Context()
 
     @staticmethod
-    def admin(external=False) -> 'Context':
-        return Context(
-            user=User.new_admin(),
-            remote=external
-        )
+    def admin(external=False) -> "Context":
+        return Context(user=User.new_admin(), remote=external)

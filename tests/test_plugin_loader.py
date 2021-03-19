@@ -3,8 +3,8 @@ from plugin_loader import build_doc
 from objects.OutputService import ServiceDocs, Arg
 
 
-def test(self, _, test1: str = '', test2: bool = True):
-    """ Hallo
+def test(self, _, test1: str = "", test2: bool = True):
+    """Hallo
     Test method
     :param self:
     :param _:
@@ -16,19 +16,11 @@ def test(self, _, test1: str = '', test2: bool = True):
 
 
 test_doc = ServiceDocs(
-    description='Hallo\nTest method',
+    description="Hallo\nTest method",
     args={
-        'test': Arg(
-            type=str,
-            doc='test param',
-            default=''
-        ),
-        'test2': Arg(
-            type=str,
-            doc='test2 param',
-            default=True
-        )
-    }
+        "test": Arg(type=str, doc="test param", default=""),
+        "test2": Arg(type=str, doc="test2 param", default=True),
+    },
 )
 
 
