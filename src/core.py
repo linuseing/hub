@@ -34,11 +34,10 @@ class Core:
 
         self.location = os.path.dirname(__file__)
         self._state = CoreState.RUNNING
-        # fmt: off
-        self._lifecycle_hooks: Dict[CoreState, List[Callable]] = {
-            key: [] for key in CoreState}
 
-        # fmt: on
+        self._lifecycle_hooks: Dict[CoreState, List[Callable]] = {
+            key: [] for key in CoreState
+        }
 
         self.plugins: Dict = {}
 
