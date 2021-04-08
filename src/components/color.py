@@ -3,7 +3,7 @@ from typing import Callable, Tuple
 from objects.Context import Context
 from objects.color import Color as ColorObj, HSV, RGB
 
-from objects.component import Component
+from objects.component import Component, GQLInterface
 
 
 class Color(Component[ColorObj]):
@@ -25,9 +25,13 @@ class Color(Component[ColorObj]):
             "b": self.set_b,
             "hsv": self.set_hsv,
             "rgb": self.set_rgb,
+            "hex": self.set_hex,
         }
 
     async def set(self, target: ColorObj, context: Context) -> ColorObj:
+        if type(target) is str:
+            await self.set_hex(target, context)
+            return self.state
         self.state = target
         await self.handler(target, context)
         return self.state
@@ -56,3 +60,18 @@ class Color(Component[ColorObj]):
         self.state.rgb = rgb
         await self.handler(self.state, context)
         return self.state
+
+    async def set_hex(self, hex, context: Context) -> ColorObj:
+        self.state.hex = hex
+        await self.handler(self.state, context)
+        return self.state
+
+    def gql(self):
+        return {
+            "name": self.name,
+            "type": self.type,
+            "address": self.dotted,
+            "state": self.state.hex,
+            "methods": list(self.methods.keys()),
+            "__typename": self.gql_type,
+        }

@@ -1,0 +1,10 @@
+type: Lamp-rgb
+control: hue.set
+switch:
+  device: schreibtisch
+brightness:
+  device: schreibtisch
+color:
+  device: schreibtisch
+settings:
+  alexa:

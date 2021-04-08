@@ -1,8 +1,9 @@
 # - GQL
  - MQTT
-# - HUE
+ - HUE
  - alexa
  - PowerGrid
  - spotify
-# - MediaManager
-# - tcp-cec
+ - MediaManager
+ - tcp-cec
+# - Discord

@@ -67,6 +67,9 @@ class Spotify:
         self.artist: Setter[asp.FullArtist] = core.storage.setter_factory(
             "spotify.artist"
         )
+        self.artist_name: Setter[str] = core.storage.setter_factory(
+            "spotify.artist_name"
+        )
         self.devices: Setter[asp.Device] = core.storage.setter_factory(
             "spotify.devices"
         )
@@ -83,6 +86,38 @@ class Spotify:
         self.audio_features: Setter[asp.AudioFeatures] = core.storage.setter_factory(
             "spotify.track.audio_features"
         )
+        self.cover_uri: Setter[str] = core.storage.setter_factory("spotify.cover_uri")
+        self.song_length: Setter[int] = core.storage.setter_factory(
+            "spotify.song_length"
+        )
+
+        core.api.gql.add_mutation("spotifyNext: Boolean", self.gql_next)
+        core.api.gql.add_mutation("spotifyPrev: Boolean", self.gql_prev)
+        core.api.gql.add_mutation("spotifySeek(pos: Int): Boolean", self.gql_seek)
+        core.api.gql.add_mutation(
+            "spotifySetVolume(volume: Int): Boolean", self.gql_set_volume
+        )
+        core.api.gql.add_mutation("spotifyTogglePlayback: Boolean", self.gql_toggle)
+
+    def gql_next(self, *_):
+        self.core.add_job(self.next_song)
+        return True
+
+    def gql_prev(self, *_):
+        self.core.add_job(self.previous_song)
+        return True
+
+    def gql_seek(self, _, info, pos):
+        self.core.add_job(self.seek, pos)
+        return True
+
+    def gql_toggle(self, *_):
+        self.core.add_job(self.toggle_playback)
+        return True
+
+    def gql_set_volume(self, _, info, volume):
+        self.core.add_job(self.set_volume, volume, None)
+        return True
 
     @run_after_init
     async def setup(self):
@@ -220,7 +255,9 @@ class Spotify:
             self.core.bus.dispatch(track_change_event(self.currently_playing))
             self.is_playing.value = True
             self.track.value = self.currently_playing.name
-            self.artist.value = self.currently_playing.artists
+            self.artist.value = self.currently_playing.artists[0]
+            self.artist_name.value = self.currently_playing.artists[0].name
+            self.song_length.value = int(self.currently_playing.duration.seconds)
 
             f = await self.currently_playing.audio_features()
             self.audio_features.value = f
@@ -230,6 +267,7 @@ class Spotify:
             #     f'acousticness: {f.acousticness}\n',
             #     f'valence: {f.valence}\n'
             # )
+            self.cover_uri.value = self.currently_playing.album.images[0].url
 
         if self.context.is_playing != self._is_playing:
             self._is_playing = self.context.is_playing
@@ -241,11 +279,7 @@ class Spotify:
                 self.core.bus.dispatch(playback_stopped_event(self.currently_playing))
 
         if self.context.track is not None:
-            self.progress.value = int(
-                self.context.progress.total_seconds()
-                / self.context.track.duration.total_seconds()
-                * 100
-            )
+            self.progress.value = int(self.context.progress.total_seconds())
 
     async def _update_devices(self):
         devices = await self.client.get_devices()

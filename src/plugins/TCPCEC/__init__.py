@@ -18,7 +18,7 @@ class CECCommand(Enum):
     turn_av_on = "15:44:6D\n"
     turn_av_off = "15:36\n"
     turn_tv_off = "10:36\n"
-    turn_tv_on = "40:44:40\n"  # pi is selected as source
+    turn_tv_on = ["40:44:40\n", "2F:82:24:00\n"]  # pi is selected as source
     select_google = "2F:82:24:00\n"
 
 
@@ -34,8 +34,8 @@ class TCPCEC:
         self.core = core
         self.config = config
 
-        self.in_queue = asyncio.queues.Queue()
-        self.out_queue = asyncio.queues.Queue(maxsize=10)
+        self.in_queue = asyncio.queues.Queue(loop=core.event_loop)
+        self.out_queue = asyncio.queues.Queue(maxsize=10, loop=core.event_loop)
 
         self._reader: Optional[StreamReader] = None
         self._writer: Optional[StreamWriter] = None
@@ -89,6 +89,7 @@ class TCPCEC:
             done, pending = await asyncio.wait(
                 [self.out_queue.get(), self._reader.readline()],
                 return_when=asyncio.FIRST_COMPLETED,
+                loop=self.core.event_loop,
             )
 
             try:

@@ -36,7 +36,7 @@ def convert_to_rgb(_in):
 
 class Color:
     def __init__(self, init=None):
-        self._rgb: [int, int, int] = [0, 0, 0]
+        self._rgb: [int, int, int] = [255, 0, 0]
         self._hsv = [0, 0, 0]
 
         if init:

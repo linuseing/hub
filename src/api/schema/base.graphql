@@ -18,4 +18,5 @@ type Mutation {
     callComponentMethod(entity: String, component: String, method: String, target: Any): Boolean!
     setValue(key: String, value: Any): Boolean!
     dispatchEvent(eventType: String, eventContent: Any): Boolean!
+    activateScene(scene: String): Boolean!
 }

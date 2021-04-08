@@ -6,7 +6,17 @@ from objects.Context import Context
 from objects.InputService import InputService
 from objects.OutputService import OutputService
 
-from typing import TYPE_CHECKING, Dict, Callable, Any, Union, Optional, TypedDict
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Callable,
+    Any,
+    Union,
+    Optional,
+    TypedDict,
+    List,
+    cast,
+)
 from inspect import getmembers, isfunction
 
 if TYPE_CHECKING:
@@ -120,6 +130,26 @@ class IO:
         except KeyError:
             raise ServiceNotFoundError
 
+    def build_pipe(self, pipe: Union[str, List[Union[str, Dict]]]) -> Callable:
+        def _pipe(_in):
+            current_state = _in
+            for formatter in pipe:
+                if type(formatter) is dict:
+                    current_state = self._formatter[list(formatter.keys())[0]].handler(
+                        current_state, **list(formatter.values())[0]
+                    )
+                elif type(formatter) is str:
+                    current_state = self._formatter[formatter].handler(current_state)
+
+            return current_state
+
+        def _formatter(_in):
+            return self._formatter[pipe].handler(_in)
+
+        if type(pipe) is str:
+            return _formatter
+        return _pipe
+
     def build_handler(
         self, service_name: str, config: Dict, formatter: Optional[str]
     ) -> Callable:
@@ -133,7 +163,7 @@ class IO:
         service = self.get_output_service(service_name)
         _handler = service.build_handler(config)
         if formatter:
-            formatter = self.get_formatter(formatter)
+            formatter = self.build_pipe(formatter)
 
             async def handler(_in, context):
                 await _handler(formatter(_in), context)

@@ -36,8 +36,6 @@ class API:
 
         self.app["_core"] = core
 
-        self.core.add_job(self.start, 8080)
-
         self.register_endpoint(WebsocketEndpoint)
         self.register_websocket_command_handler("get_entities", get_entities)
 

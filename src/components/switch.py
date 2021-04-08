@@ -5,6 +5,7 @@ from typing import Callable, Dict
 
 
 class Switch(Component[bool]):
+    """Component used to represent a power state"""
 
     type = "switch"
     gql_type = "Switch"

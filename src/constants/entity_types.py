@@ -5,6 +5,7 @@ class EntityType(Enum):
     LAMP = "Lamp"
     LAMP_RGB = "Lamp-rgb"
     LAMP_BRIGHTNESS = "Lamp-dimmable"
+    SWITCH = "Switch"
     COMPOSED = "COMPOSED"
 
     @classmethod

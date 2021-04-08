@@ -54,6 +54,9 @@ class Core:
 
         self.add_job(self.cio)
 
+        self.add_job(self.api.start, 8080)
+        # self.add_job(lambda: self.registry.activate_scene('test'))
+
     async def cio(self):
         while True:
             with suppress(Exception):

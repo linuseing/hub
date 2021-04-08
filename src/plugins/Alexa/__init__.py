@@ -41,6 +41,7 @@ class Alexa:
             EntityType.LAMP: "LIGHT",
             EntityType.LAMP_RGB: "LIGHT",
             EntityType.LAMP_BRIGHTNESS: "LIGHT",
+            EntityType.SWITCH: "LIGHT",
         }
 
     @on(ENTITY_CREATED)

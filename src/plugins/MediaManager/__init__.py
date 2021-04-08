@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Dict, Optional
 from asyncspotify import Device
 
 from objects.Event import Event
-from plugin_api import plugin, on, run_after_init, bind_to
+from plugin_api import plugin, on, run_after_init, bind_to, output_service
 from plugins.spotify import Spotify
 from plugins.spotify.constants import *
 from plugins.TCPCEC import TCPCEC, CECCommand, Command
@@ -36,10 +36,16 @@ class MediaManger:
     async def turn_on(self, event: Event[Device]):
         device = event.event_content
         if device.name == "Kino":
-            print("turning on kino")
             await self.tcp_cec.out_queue.put(Command(CECCommand.turn_av_on, None))
             await asyncio.sleep(3)
-            await self.spotify.set_volume(20, None)
+            # await self.spotify.set_volume(20, None)
+
+    @output_service("MM.projector", None, None)
+    async def projector(self, target, context):
+        if target:
+            await self.tcp_cec.out_queue.put(Command(CECCommand.turn_tv_on, None))
+        else:
+            await self.tcp_cec.out_queue.put(Command(CECCommand.turn_tv_off, None))
 
     @bind_to("spotify.volume")
     async def spotify_volume(self, volume):
