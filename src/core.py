@@ -33,6 +33,7 @@ class Core:
         self.event_loop = event_loop if event_loop else asyncio.get_event_loop()
 
         self.location = os.path.dirname(__file__)
+        print(self.location)
         self._state = CoreState.RUNNING
 
         self._lifecycle_hooks: Dict[CoreState, List[Callable]] = {
