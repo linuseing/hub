@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import TYPE_CHECKING, List, Callable
 
@@ -17,6 +18,9 @@ if TYPE_CHECKING:
     from core import Core
 
 VERSION = "0.1"
+
+
+LOGGER = logging.getLogger("GQL")
 
 
 class GraphAPI:
@@ -98,7 +102,12 @@ class GraphAPI:
         )
         conf = Config()
         conf.bind = ["0.0.0.0:8000"]
-        await serve(app, conf)
+        conf.loglevel = logging.FATAL  # to suppress lifespan error
+        LOGGER.info("starting GQL API")
+        try:  # also to suppress lifespan error
+            await serve(app, conf)
+        except:
+            pass
 
     # ----------- QUERIES -----------
 

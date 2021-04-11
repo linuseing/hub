@@ -1,3 +1,5 @@
+import logging
+
 import aiohttp_cors
 
 from typing import TYPE_CHECKING, Type, Callable, Dict, Coroutine
@@ -11,6 +13,9 @@ from api.websocket_handler import get_entities
 
 if TYPE_CHECKING:
     from core import Core
+
+
+LOGGER = logging.getLogger("API")
 
 
 class API:
@@ -68,4 +73,4 @@ class API:
         try:
             await self.site.start()
         except Exception as e:
-            print(f"error while setting up web server ({e})")
+            LOGGER.error(f"error while setting up web server ({e})")
