@@ -58,7 +58,7 @@ def build_doc(func: Callable):
 
 
 def load_plugins(core):
-    white_list = yaml_utils.load_yaml(f"{core.location}/settings/plugins.yaml")
+    white_list = yaml_utils.load_yaml(f"{core.location}/config/settings/plugins.yaml")
     white_list = list(map(lambda x: x.upper(), white_list))
     plugins = {}
     loaded = []
