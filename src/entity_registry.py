@@ -50,8 +50,8 @@ class EntityRegistry:
             BRIGHTNESS: Brightness,
             COLOR: Color,
         }
-        self.load_entities_from_config(r"src/config/entities")
-        self.load_and_build_scenes(f"src/config/scenes")
+        self.load_entities_from_config(f"{core.location}/config/entities")
+        self.load_and_build_scenes(f"{core.location}/config/scenes")
 
         self.state_queue = MultisubscriberQueue()
 
