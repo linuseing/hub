@@ -1,0 +1,9 @@
+type: Lamp
+control: mqtt.publish
+switch:
+  topic: sofa/light/switch
+  pipe:
+    - switch.to_string
+settings:
+  alexa:
+  grid: 1

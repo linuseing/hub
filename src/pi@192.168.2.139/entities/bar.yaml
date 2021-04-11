@@ -1,0 +1,7 @@
+type: Lamp
+control: mqtt.publish
+switch:
+  topic: bar_test_topic
+settings:
+  alexa:
+  grid: 1

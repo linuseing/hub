@@ -1,0 +1,10 @@
+type: Lamp-rgb
+control: hue.set
+switch:
+  device: decke
+brightness:
+  device: decke
+color:
+  device: decke
+settings:
+  alexa:
