@@ -18,3 +18,6 @@ RUN pip3 install -r /requirements.txt
 
 COPY ./src .
 RUN ls
+
+CMD ["ls", "./config"]
+CMD ["python3", "./main.py"]
