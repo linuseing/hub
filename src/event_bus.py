@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Dict, List, Callable, TYPE_CHECKING, Any
 
 from asyncio_multisubscriber_queue import MultisubscriberQueue
@@ -13,6 +14,8 @@ from plugin_loader import build_doc
 
 if TYPE_CHECKING:
     from core import Core
+
+LOGGER = logging.getLogger("EventBus")
 
 silent_events = [events.MATCH_ALL]
 
@@ -54,8 +57,7 @@ class EventBus:
         listeners += self._listeners.get(events.MATCH_ALL, [])
 
         if event.event_type not in silent_events:
-            print(event)
-            pass  # TODO: logging
+            LOGGER.info(event)
 
         for handler in listeners:
             self.core.add_job(handler, event)
