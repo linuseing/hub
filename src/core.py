@@ -1,5 +1,6 @@
 import ast
 import asyncio
+import logging
 import os
 from contextlib import suppress
 from typing import Any, Dict, List, Callable
@@ -17,6 +18,9 @@ from objects.Event import Event
 from objects.core_state import CoreState
 from plugin_loader import load_plugins
 from timer import Timer
+
+
+LOGGER = logging.getLogger("Core")
 
 
 def is_blocking(job):
@@ -106,6 +110,6 @@ class Core:
     @core_state.setter
     def core_state(self, state: CoreState):
         self._state = state
-        print(f"going to {state}")
+        LOGGER.info(f"new core state, transition to {state}")
         for callback in self._lifecycle_hooks[state]:
             self.add_job(callback)
