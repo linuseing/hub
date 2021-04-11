@@ -114,10 +114,10 @@ class EventBus:
         """
         # using a dict as a mutable data structure
         event = {}
-        lock = asyncio.locks.Event()
+        lock = asyncio.locks.Event(loop=self.core.event_loop)
         lock.clear()
 
-        def callback(_event: Event):
+        async def callback(_event: Event):
             event["event"] = _event
             lock.set()
 
