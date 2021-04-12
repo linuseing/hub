@@ -40,7 +40,6 @@ class Spotify:
     def __init__(self, core: "Core", config: Dict):
         self.core = core
         self.config = config
-        print(config)
 
         self.client: Optional[asp.Client] = None
 
@@ -91,21 +90,23 @@ class Spotify:
             "spotify.song_length"
         )
 
-        core.api.gql.add_mutation("spotifyNext: Boolean", self.gql_next)
-        core.api.gql.add_mutation("spotifyPrev: Boolean", self.gql_prev)
+        core.api.gql.add_mutation("spotifyNext: String", self.gql_next)
+        core.api.gql.add_mutation("spotifyPrev: String", self.gql_prev)
         core.api.gql.add_mutation("spotifySeek(pos: Int): Boolean", self.gql_seek)
         core.api.gql.add_mutation(
             "spotifySetVolume(volume: Int): Boolean", self.gql_set_volume
         )
         core.api.gql.add_mutation("spotifyTogglePlayback: Boolean", self.gql_toggle)
 
-    def gql_next(self, *_):
+    async def gql_next(self, *_):
         self.core.add_job(self.next_song)
-        return True
+        event: Event[FullTrack] = await self.core.bus.wait_for(EVENT_TRACK_CHANGE)
+        return event.event_content.name
 
-    def gql_prev(self, *_):
+    async def gql_prev(self, *_):
         self.core.add_job(self.previous_song)
-        return True
+        event: Event[FullTrack] = await self.core.bus.wait_for(EVENT_TRACK_CHANGE)
+        return event.event_content.name
 
     def gql_seek(self, _, info, pos):
         self.core.add_job(self.seek, pos)
@@ -147,7 +148,6 @@ class Spotify:
                         )
                 except AttributeError:
                     self.current_playback_device.value = self.context.device
-                    print(self.current_playback_device.value)
                     self.core.bus.dispatch(playback_device_change(self.context.device))
 
                 # updating track state and dispatching events accordingly

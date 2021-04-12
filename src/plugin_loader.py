@@ -1,3 +1,4 @@
+import logging
 import os
 from inspect import (
     getmembers,
@@ -20,6 +21,9 @@ from constants.plugin_api import *
 from objects.InputService import InputService
 from objects.OutputService import OutputService, ServiceDocs, Arg
 from objects.core_state import CoreState
+
+
+LOGGER = logging.getLogger("PluginLoader")
 
 
 def is_plugin(cls):
@@ -163,6 +167,6 @@ def load_plugins(core):
                     )
                     core.io.add_formatter(formatter_name, formatter)
 
-    print(f"loaded: {list(plugins.keys())}")
+    LOGGER.info(f"loaded: {list(plugins.keys())}")
 
     return plugins

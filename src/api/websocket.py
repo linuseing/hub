@@ -59,12 +59,10 @@ class Connection:
             try:
                 message = await self.websocket.receive()
                 if message.type == web.WSMsgType.CLOSE:
-                    print("closing")
                     break  # TODO: closing
                 elif message.type == web.WSMsgType.PING:
                     pass  # TODO: Pong
                 elif message.type == web.WSMsgType.TEXT:
-                    print(message.data)
                     handler = self.core.api.get_ws_handler(str(message.data))
                     self.core.add_job(handler, message, self)
                     pass  # TODO: handling

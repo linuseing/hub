@@ -55,12 +55,10 @@ class Color:
 
     @classmethod
     def from_string(cls, _in: str, delimiter=",", strip=1):
-        print("test")
         if type(_in) is str:
             _str = _in[strip:-strip].split(delimiter)
             return cls(_str)
         elif type(_in) is list:
-            print(_in)
             i = cls()
             i.rgb = _in
             return i

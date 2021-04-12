@@ -51,5 +51,4 @@ class MediaManger:
     async def spotify_volume(self, volume):
         if volume != self._p_v:
             self._p_v = volume
-            print("spotify volume:", int(volume / VOLUME_FACTOR))
             await self.tcp_cec.set_volume(int(volume / VOLUME_FACTOR))

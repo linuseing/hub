@@ -76,7 +76,6 @@ class HUE:
                             cb, sensor.state["buttonevent"], Context.admin()
                         )
                     self._sensor_states[sensor.name] = sensor.state
-                    print(sensor.state)
         except Exception as e:
             print(e)
 

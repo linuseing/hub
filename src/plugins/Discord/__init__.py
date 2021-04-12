@@ -17,6 +17,6 @@ class Discord:
     def client_factory(self):
         class DClient(Client):
             async def on_voice_state_update(client, data):
-                print(data)
+                pass
 
         return DClient

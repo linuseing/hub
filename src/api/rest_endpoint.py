@@ -1,10 +1,14 @@
 import asyncio
+import logging
 from typing import Dict, Callable
 
 from aiohttp import web
 
 from api.constants import *
 from helper.json_encoder import default_encoder
+
+
+LOGGER = logging.getLogger("RestApi")
 
 
 def inject_core(func):
@@ -49,7 +53,7 @@ class RESTEndpoint:
         try:
             msg = default_encoder(result).encode("UTF-8")
         except Exception as err:
-            print("Unable to serialize to JSON: %s\n%s", err, result)
+            LOGGER.error("Unable to serialize to JSON: %s\n%s", err, result)
         response = web.Response(
             body=msg,
             content_type="JSON",

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Dict, List, Callable, Optional, Any
 
 from paho.mqtt.client import Client, MQTTMessage
@@ -11,6 +12,8 @@ from .constants import *
 
 # scopes
 PUBLISH = "mqtt.publish"
+
+LOGGER = logging.getLogger("MQTT")
 
 
 @plugin("mqtt")
@@ -37,7 +40,7 @@ class MQTT:
             self.client.loop_start()
             self.event.set()
         except Exception as e:
-            print(e)
+            LOGGER.error(f"there was an error setting up the MQTT connection ({e})")
 
     def add_subscription_callback(self, topic: str, callback: Callable):
         if topic in self.subscriptions:

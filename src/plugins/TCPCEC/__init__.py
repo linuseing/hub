@@ -55,7 +55,6 @@ class TCPCEC:
 
     @run_after_init
     async def open(self):
-        print("open")
         self._reader, self._writer = await asyncio.open_connection(
             "192.168.2.199", 9526
         )
@@ -112,7 +111,6 @@ class TCPCEC:
                     await result.callback(msg.decode())
             else:
                 pass
-                # print(result)
 
     async def set_volume(self, volume):
         running = True if self._target is not None else False
@@ -153,7 +151,6 @@ class TCPCEC:
         :param _: _
         :return:
         """
-        print(target)
         if target:
             await self.out_queue.put(Command(CECCommand.turn_tv_on, None))
         else:

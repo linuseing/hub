@@ -88,7 +88,6 @@ class Alexa:
             url = "/alexa/devices"
 
             async def get(self, _):
-                print("get")
                 return self.json(alexa._devices)
 
         return AlexaDevices
@@ -99,7 +98,6 @@ class Alexa:
             url = "/api/scenes"
 
             async def get(self, _):
-                print("get_scenes")
                 return self.json({})
 
         return AlexaDevices
