@@ -102,12 +102,12 @@ class GraphAPI:
         )
         conf = Config()
         conf.bind = ["0.0.0.0:8000"]
-        conf.loglevel = logging.FATAL  # to suppress lifespan error
+        conf.loglevel = "fatal"  # to suppress lifespan error
         LOGGER.info("starting GQL API")
         try:  # also to suppress lifespan error
             await serve(app, conf)
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
     # ----------- QUERIES -----------
 
