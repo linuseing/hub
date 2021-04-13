@@ -69,7 +69,7 @@ class API:
         self.app._router.freeze = lambda: None
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
-        self.site = web.TCPSite(self.runner, "127.0.0.1", port)
+        self.site = web.TCPSite(self.runner, "0.0.0.0", port)
         try:
             await self.site.start()
         except Exception as e:
