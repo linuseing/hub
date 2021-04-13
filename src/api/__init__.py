@@ -33,7 +33,7 @@ class API:
 
         self._ws_command_handler: Dict[str, Callable] = {}
 
-        self.app = web.Application()
+        self.app = web.Application(middlewares=[self.auth_factory()])
 
         cors = aiohttp_cors.setup(
             self.app,
