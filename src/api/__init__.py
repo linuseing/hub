@@ -5,6 +5,7 @@ import aiohttp_cors
 from typing import TYPE_CHECKING, Type, Callable, Dict, Coroutine
 
 from aiohttp import web
+from aiohttp.web_middlewares import middleware
 
 from api.gql import GraphAPI
 from api.rest_endpoint import RESTEndpoint, handler_factory
@@ -19,7 +20,13 @@ LOGGER = logging.getLogger("API")
 
 
 class API:
-    def __init__(self, core: "Core"):
+    def __init__(self, core: "Core", api_tokens=None):
+
+        if api_tokens is None:
+            api_tokens = []
+
+        self.user_tokens = api_tokens
+
         self.core = core
 
         self.gql = GraphAPI(core)
@@ -74,3 +81,16 @@ class API:
             await self.site.start()
         except Exception as e:
             LOGGER.error(f"error while setting up web server ({e})")
+
+    def auth_factory(self):
+        @middleware
+        async def auth_middleware(request: web.Request, handler):
+            try:
+                if "AUTH" in request.headers:
+                    if request.headers["AUTH"] in self.user_tokens:
+                        return await handler(request)
+                return web.Response(status=401)
+            except Exception as e:
+                print(e)
+
+        return auth_middleware

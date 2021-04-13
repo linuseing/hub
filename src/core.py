@@ -45,7 +45,11 @@ class Core:
 
         self.plugins: Dict = {}
 
-        self.api = API(self)
+        api_tokens = []
+        if default_token := os.getenv("API_TOKEN"):
+            api_tokens.append(default_token)
+
+        self.api = API(self, api_tokens)
         self.storage = Storage(self)
         self.timer = Timer(self)
         self.io: IO = IO(self)
