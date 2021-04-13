@@ -128,6 +128,9 @@ class EntityRegistry:
     def activate_scene(self, scene: str):
         self._scenes[scene].activate()
 
+    def get_scenes(self) -> List[str]:
+        return list(self._scenes.keys())
+
     def add_entity(self, name, entity: Entity):
         self._entities[name] = entity
 

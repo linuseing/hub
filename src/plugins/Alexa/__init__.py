@@ -29,6 +29,7 @@ class Alexa:
             "BrightnessController": self.brightness,
             "ColorController": self.color,
             "PowerController": self.switch,
+            "SceneController": self.scene,
         }
         self._mappings: Dict[str, str] = {
             "brightness": "BrightnessController",
@@ -98,12 +99,15 @@ class Alexa:
             url = "/api/scenes"
 
             async def get(self, _):
-                return self.json({})
+                return self.json({'scenes': alexa.core.registry.get_scenes()})
 
         return AlexaDevices
 
     def set_state(self, entity: str, namespace: str, target: Any):
         self.core.add_job(self._controller[namespace], entity, target)
+
+    async def scene(self, device, target: Any):
+        self.core.registry.activate_scene(device)
 
     async def switch(self, device: str, target: bool):
         await self.core.registry.async_call_method_d(
