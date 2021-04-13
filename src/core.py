@@ -56,7 +56,9 @@ class Core:
 
         self.core_state = CoreState.RUNNING
 
-        self.add_job(self.api.start, 8080)
+        api_port = os.getenv("API_PORT", 8081)
+
+        self.add_job(self.api.start, int(api_port))
         # self.add_job(lambda: self.registry.activate_scene('test'))
 
         if os.getenv("CIF") == 1:
