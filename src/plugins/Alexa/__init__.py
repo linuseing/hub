@@ -107,6 +107,7 @@ class Alexa:
         self.core.add_job(self._controller[namespace], entity, target)
 
     async def scene(self, device, target: Any):
+        print(device)
         self.core.registry.activate_scene(device)
 
     async def switch(self, device: str, target: bool):
