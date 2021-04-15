@@ -1,7 +1,9 @@
+import asyncio
 from enum import Enum
 from typing import Dict, TYPE_CHECKING, List, Optional
 
 from constants.events import ENTITY_CREATED, ENTITY_STATE_CHANGED
+from objects.Context import Context
 from objects.Event import Event
 from objects.entity import Entity
 from plugin_api import plugin, on
@@ -28,19 +30,25 @@ class PowerGrid:
 
         self._consumer: List[Entity] = []
         self._active_consumer: List[Entity] = []
+        self._retry = []
 
         self._grid_state = GridState.unknown
 
     @on(ENTITY_CREATED)
-    def on_created(self, event: Event):
-        entity: Entity = event.event_content
-        if entity.settings.get("grid", False):
+    def on_created(self, event: Event[Entity]):
+        entity = event.event_content
+        if settings := entity.settings.get("grid", False):
             self._consumer.append(entity)
+            try:
+                if settings.get("retry"):
+                    self._retry.append(entity.name)
+            except:
+                pass
         if entity.name == self.config["supplier"]:
             self.supplier = entity
 
     @on(ENTITY_STATE_CHANGED)
-    def on_state(self, event):
+    async def on_state(self, event):
         entity: Entity = event.event_content["entity"]
         component_type: str = event.event_content["component_type"]
         new_state: bool = event.event_content["new_state"]
@@ -54,8 +62,6 @@ class PowerGrid:
 
         if entity not in self._consumer or component_type != "switch":
             return
-
-        print(entity)
 
         if new_state:
             if entity not in self._active_consumer:
@@ -76,6 +82,9 @@ class PowerGrid:
             GridState.unknown,
         ]:
             self.power_up()
+            if entity.name in self._retry:
+                await asyncio.sleep(.75)
+                await entity.call_method("switch", "set", new_state, Context.admin())
 
     def power_up(self):
         self._grid_state = GridState.on
