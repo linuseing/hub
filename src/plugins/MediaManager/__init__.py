@@ -37,6 +37,7 @@ class MediaManger:
         device = event.event_content
         if device.name == "Kino":
             await self.tcp_cec.out_queue.put(Command(CECCommand.turn_av_on, None))
+            await self.tcp_cec.out_queue.put(Command(CECCommand.select_google, None))
             await asyncio.sleep(3)
             # await self.spotify.set_volume(20, None)
 
