@@ -38,8 +38,13 @@ class MediaManger:
         if device.name == "Kino":
             await self.tcp_cec.out_queue.put(Command(CECCommand.turn_av_on, None))
             await self.tcp_cec.out_queue.put(Command(CECCommand.select_google, None))
+            await self.tcp_cec.reset_connection()
             await asyncio.sleep(3)
             # await self.spotify.set_volume(20, None)
+
+    @on("cec.reset")
+    async def s_v2(self, event):
+        await self.tcp_cec.set_volume(int(self._p_v / VOLUME_FACTOR))
 
     @output_service("MM.projector", None, None)
     async def projector(self, target, context):

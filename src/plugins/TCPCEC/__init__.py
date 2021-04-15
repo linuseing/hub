@@ -1,10 +1,11 @@
 import asyncio
 import math
-from asyncio import StreamWriter, StreamReader, CancelledError, Condition
+from asyncio import StreamWriter, StreamReader, CancelledError, Condition, Handle, Task
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, TYPE_CHECKING, Optional, Callable
 
+from objects.Event import Event
 from plugin_api import plugin, output_service, run_after_init, poll_job, on
 
 if TYPE_CHECKING:
@@ -53,20 +54,25 @@ class TCPCEC:
 
         self._target = None
 
+        self._manager: Optional[Task] = None
+
+        self._close_event = asyncio.Event(loop=core.event_loop)
+        self._closed_event = asyncio.Event(loop=core.event_loop)
+
     @run_after_init
     async def open(self):
+        self._close_event.clear()
         fut = asyncio.open_connection(
                 "192.168.2.199", 9526
             )
         try:
-            self._reader, self._writer = await asyncio.wait_for(fut, timeout=2, loop=self.core.event_loop)
+            reader, writer = await asyncio.wait_for(fut, timeout=2, loop=self.core.event_loop)
+            self._manager = self.core.event_loop.create_task(self.manager(reader, writer))
             print('connected')
         except asyncio.TimeoutError:
             print('retry')
             await asyncio.sleep(3)
             self.core.add_job(self.open)
-
-        self.core.add_job(self.manager)
 
     async def _approach_volume(self, new_volume):
         if str(new_volume).startswith("51:7a:"):
@@ -90,15 +96,21 @@ class TCPCEC:
         else:
             self._target = None
 
-    async def manager(self):
+    async def manager(self, reader, writer: StreamWriter):
+        self.core.bus.dispatch(Event(
+            event_type="cec.reconnected",
+            event_content=None,
+            context=None
+        ))
         while True:
             try:
                 done, pending = await asyncio.wait(
-                    [self.out_queue.get(), self._reader.readline()],
+                    [self.out_queue.get(), reader.readline(), self._close_event.wait()],
                     return_when=asyncio.FIRST_COMPLETED,
                     loop=self.core.event_loop,
                 )
-            except:
+            except Exception as e:
+                print(e)
                 break
 
             try:
@@ -109,21 +121,23 @@ class TCPCEC:
                 pass
 
             result = done.pop().result()
+            if type(result) is bool:
+                writer.close()
+                await writer.wait_closed()
+                self._closed_event.set()
+                break
             if type(result) is Command:
                 if type(result.command.value) is list:
                     for fragment in result.command.value:
-                        self._writer.write(fragment.encode())
+                        writer.write(fragment.encode())
                 else:
-                    self._writer.write(result.command.value.encode())
-                await self._writer.drain()
+                    writer.write(result.command.value.encode())
+                await writer.drain()
                 if result.callback:
-                    msg = await self._reader.readline()
+                    msg = await reader.readline()
                     await result.callback(msg.decode())
             else:
                 pass
-        print('cec conn lost')
-        await asyncio.sleep(3)
-        self.core.add_job(self.open)
 
     async def set_volume(self, volume):
         running = True if self._target is not None else False
@@ -168,6 +182,12 @@ class TCPCEC:
             await self.out_queue.put(Command(CECCommand.turn_tv_on, None))
         else:
             await self.out_queue.put(Command(CECCommand.turn_tv_off, None))
+
+    async def reset_connection(self):
+        self._closed_event.clear()
+        self._close_event.set()
+        await self._closed_event.wait()
+        self.core.add_job(self.open)
 
 
 def calculate_volume(volume):
