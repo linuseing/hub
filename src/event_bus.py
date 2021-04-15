@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import logging
 from typing import Dict, List, Callable, TYPE_CHECKING, Any
 
@@ -9,6 +10,7 @@ from constants.scopes import BUS, DISPATCH_EVENT
 from exceptions import EventCallbackNotFound, NotAuthorizedError
 from objects.Context import Context
 from objects.Event import Event
+from objects.InputService import InputService
 from objects.OutputService import OutputService
 from plugin_loader import build_doc
 
@@ -33,6 +35,14 @@ class EventBus:
                 None,
                 doc=build_doc(self.dispatch_event_service),
             ),
+        )
+
+        core.io.add_input_service(
+            "bus.listen",
+            InputService(
+                lambda c, event_type: self.listen(event_type, c),
+                None
+            )
         )
 
         self._event_stream = MultisubscriberQueue()
@@ -60,7 +70,10 @@ class EventBus:
             LOGGER.info(event)
 
         for handler in listeners:
-            self.core.add_job(handler, event)
+            if len(inspect.signature(handler).parameters) == 2:
+                self.core.add_job(handler, event, event.context)
+            else:
+                self.core.add_job(handler, event)
 
         await self._event_stream.put(event)
 

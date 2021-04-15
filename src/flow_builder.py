@@ -11,21 +11,24 @@ class FlowSyntax(Enum):
     full = 1
 
 
-def build_flow(syntax: FlowSyntax, core, config, nodes: Dict[str, Node] = None):
+def build_flow(syntax: FlowSyntax, core, name, config, nodes: Dict[str, Node] = None) -> Flow:
     if not nodes:
         nodes = {}
 
     if syntax == FlowSyntax.micro:
-        _build_micro_flow(core, config)
+        return _build_micro_flow(core, name, config)
     elif syntax == FlowSyntax.full:
-        _build_default_flow(core, config)
+        return _build_default_flow(core, name, config)
 
 
-def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, Any]]]):
+def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, Any]]]) -> Flow:
     settings = DEFAULT_SETTINGS_MICRO
 
-    if list(config[0].values())[0] == CONFIG:
+    has_config = 0
+
+    if list(config[0].keys())[0] == CONFIG:
         settings = config.pop(0)[CONFIG]
+        has_config = 1
 
     flow = Flow(name)
     flow.suspend_on_error = settings.get(SUSPEND_ON_ERROR, False)
@@ -34,8 +37,10 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
     trigger_conf: Union[str, Dict]
     trigger, trigger_conf = list(config[0].items())[0]
 
-    for node_id, node_conf in enumerate(config[1:], start=1):
+    core.io.setup_input(trigger, trigger_conf, flow.entry_point, None)
 
+    for node_id, node_conf in enumerate(config[1+has_config:], start=1):
+        print(1+has_config)
         pass_through = True
 
         service: str = (
@@ -55,6 +60,8 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
 
         flow.add_node(str(node_id), node)
 
+    return flow
 
-def _build_default_flow(core, config):
+
+def _build_default_flow(core, config) -> Flow:
     pass

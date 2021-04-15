@@ -151,7 +151,7 @@ class IO:
         return _pipe
 
     def build_handler(
-        self, service_name: str, config: Dict, formatter: Optional[str]
+        self, service_name: str, config: Dict, formatter: Optional[str] = None
     ) -> Callable:
         """
         Builds an output handler from a service name and configuration

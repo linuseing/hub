@@ -65,8 +65,8 @@ class Core:
         self.add_job(self.api.start, int(api_port))
         # self.add_job(lambda: self.registry.activate_scene('test'))
 
-        if os.getenv("CIF") == 1:
-            self.add_job(self.cio)
+        # if os.getenv("CIF") == 1:
+        self.add_job(self.cio)
 
     async def cio(self):
         while True:

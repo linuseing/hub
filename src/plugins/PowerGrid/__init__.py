@@ -34,7 +34,7 @@ class PowerGrid:
     @on(ENTITY_CREATED)
     def on_created(self, event: Event):
         entity: Entity = event.event_content
-        if grid := entity.settings.get("grid", False):
+        if entity.settings.get("grid", False):
             self._consumer.append(entity)
         if entity.name == self.config["supplier"]:
             self.supplier = entity
@@ -54,6 +54,8 @@ class PowerGrid:
 
         if entity not in self._consumer or component_type != "switch":
             return
+
+        print(entity)
 
         if new_state:
             if entity not in self._active_consumer:

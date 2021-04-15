@@ -32,7 +32,7 @@ class Flow:
         pass
 
     async def entry_point(self, payload: Any, context: Context):
-        pass
+        print(payload, context)
 
     def add_node(self, name: str, node: Node):
         self._nodes[name] = node
