@@ -55,9 +55,16 @@ class TCPCEC:
 
     @run_after_init
     async def open(self):
-        self._reader, self._writer = await asyncio.open_connection(
-            "192.168.2.199", 9526
-        )
+        fut = asyncio.open_connection(
+                "192.168.2.199", 9526
+            )
+        try:
+            self._reader, self._writer = await asyncio.wait_for(fut, timeout=2, loop=self.core.event_loop)
+            print('connected')
+        except asyncio.TimeoutError:
+            print('retry')
+            await asyncio.sleep(3)
+            self.core.add_job(self.open)
 
         self.core.add_job(self.manager)
 
@@ -85,11 +92,14 @@ class TCPCEC:
 
     async def manager(self):
         while True:
-            done, pending = await asyncio.wait(
-                [self.out_queue.get(), self._reader.readline()],
-                return_when=asyncio.FIRST_COMPLETED,
-                loop=self.core.event_loop,
-            )
+            try:
+                done, pending = await asyncio.wait(
+                    [self.out_queue.get(), self._reader.readline()],
+                    return_when=asyncio.FIRST_COMPLETED,
+                    loop=self.core.event_loop,
+                )
+            except:
+                break
 
             try:
                 gathered = asyncio.gather(*pending)
@@ -111,6 +121,9 @@ class TCPCEC:
                     await result.callback(msg.decode())
             else:
                 pass
+        print('cec conn lost')
+        await asyncio.sleep(3)
+        self.core.add_job(self.open)
 
     async def set_volume(self, volume):
         running = True if self._target is not None else False
