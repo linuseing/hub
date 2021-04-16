@@ -1,6 +1,6 @@
 import asyncio
 import math
-from asyncio import StreamWriter, StreamReader, CancelledError, Condition, Handle, Task
+from asyncio import StreamWriter, StreamReader, CancelledError, Condition, Handle, Task, QueueEmpty
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, TYPE_CHECKING, Optional, Callable
@@ -187,6 +187,11 @@ class TCPCEC:
         self._closed_event.clear()
         self._close_event.set()
         await self._closed_event.wait()
+        try:
+            for _ in range(10):
+                t = self.out_queue.get_nowait()
+        except QueueEmpty:
+            pass
         self.core.add_job(self.open)
 
 
