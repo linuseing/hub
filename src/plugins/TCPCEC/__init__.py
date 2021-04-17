@@ -75,7 +75,6 @@ class TCPCEC:
             self.core.add_job(self.open)
 
     async def _approach_volume(self, new_volume):
-        print(new_volume)
         if str(new_volume).startswith("51:7a:"):
             self.volume = calculate_volume(new_volume)
         elif type(new_volume) is str:
@@ -96,6 +95,10 @@ class TCPCEC:
             )
         else:
             self._target = None
+            self.core.bus.dispatch(Event(
+                "cec.set_volume",
+                self.volume
+            ))
 
     async def manager(self, reader, writer: StreamWriter):
         self.core.bus.dispatch(Event(
@@ -141,7 +144,10 @@ class TCPCEC:
                 pass
 
     async def set_volume(self, volume):
-        print("?")
+        self.core.bus.dispatch(Event(
+            "cec.setting_volume",
+            volume
+        ))
         running = True if self._target is not None else False
         self._target = volume
         if not running:

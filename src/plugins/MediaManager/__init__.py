@@ -36,6 +36,7 @@ class MediaManger:
     async def turn_on(self, event: Event[Device]):
         device = event.event_content
         if device.name == "Kino":
+            await self.tcp_cec.reset_connection()
             await self.tcp_cec.out_queue.put(Command(CECCommand.turn_av_on, None))
             await self.tcp_cec.out_queue.put(Command(CECCommand.select_google, None))
             await self.tcp_cec.reset_connection()
