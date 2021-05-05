@@ -17,6 +17,7 @@ COPY --from=builder /requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
 
 COPY ./src .
-RUN ls
+
+ARG COMMIT="???"
 
 CMD ["python3", "./main.py"]
