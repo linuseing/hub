@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 from typing import TYPE_CHECKING, List, Callable
 
@@ -43,6 +44,10 @@ class GraphAPI:
         self.query.set_field(
             AVAILABLE_FORMATTER,
             lambda *_: list(map(lambda x: x.gql(), core.io.formatter)),
+        )
+        self.query.set_field(
+            COMMIT_ID,
+            lambda *_: os.getenv("COMMIT", 'unknown')
         )
 
         self.query.set_field(ENTITY, self.get_entity)

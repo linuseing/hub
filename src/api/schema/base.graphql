@@ -1,6 +1,7 @@
 type Query {
     coreVersion: String!
     pluginVersion: String!
+    commitID: String!
     entity(name: String): Entity
     entities: [Entity]
     plugins: [String]
