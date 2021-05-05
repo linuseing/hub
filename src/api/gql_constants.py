@@ -3,6 +3,7 @@ from constants import BASE_TYPES
 # fields
 CORE_VERSION = "coreVersion"
 PLUGIN_VERSION = "pluginVersion"
+COMMIT_ID = "commitID"
 
 ENTITIES = "entities"
 ENTITY = "entity"
