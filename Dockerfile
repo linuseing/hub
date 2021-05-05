@@ -20,4 +20,6 @@ COPY ./src .
 
 ARG COMMIT="???"
 
+ENV COMMIT=$COMMIT
+
 CMD ["python3", "./main.py"]
