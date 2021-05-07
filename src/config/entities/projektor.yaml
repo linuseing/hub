@@ -4,4 +4,5 @@ switch:
   device: Projektor
 settings:
   alexa:
-  grid: 1
+  grid:
+    retry: true
