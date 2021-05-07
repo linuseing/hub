@@ -41,7 +41,7 @@ class RESTEndpoint:
             router.add_route(method, self.url, handler)
 
     @staticmethod
-    def json(result: Dict, status_code=200, headers=None):
+    def json(result, status_code=200, headers=None):
         """
         returns a JSON response.
         :param result: JSON dict to send
