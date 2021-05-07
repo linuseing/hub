@@ -48,6 +48,17 @@ python-versions = "*"
 aiohttp = "*"
 
 [[package]]
+name = "aioserial"
+version = "1.3.0"
+description = "An asynchronous serial port library of Python"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+pyserial = "*"
+
+[[package]]
 name = "appdirs"
 version = "1.4.4"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -368,6 +379,17 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pyserial"
+version = "3.5"
+description = "Python Serial Port Extension"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+cp2110 = ["hidapi"]
+
+[[package]]
 name = "python-dotenv"
 version = "0.15.0"
 description = "Add .env support to your django/flask apps in development and deployments"
@@ -548,7 +570,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "4b4669a750bc5a35ae3f8103eb32ccdfb13d1f4a2e014ca184c4a01f7306bf08"
+content-hash = "45941e6a85debae829ad0315bfdec53e64fac2e0aeaa982fa2e0e09c855e6b63"
 
 [metadata.files]
 aioconsole = [
@@ -600,6 +622,10 @@ aiohttp-cors = [
 aiohue = [
     {file = "aiohue-2.2.0-py3-none-any.whl", hash = "sha256:6b5bd131e06570d4122716fd195abf5bdf7a2730f1934d6bd811ff0e1601f986"},
     {file = "aiohue-2.2.0.tar.gz", hash = "sha256:35696d04d6eb0328b7031ea3c0a3cfe5d83dfcf62f920522e4767d165c6bc529"},
+]
+aioserial = [
+    {file = "aioserial-1.3.0-py3-none-any.whl", hash = "sha256:6f2ef198d2c944dffb12e0ed560222004f0d35d34b4279e26523fd207de45ff7"},
+    {file = "aioserial-1.3.0.tar.gz", hash = "sha256:3018a083d370365aea9665fe0756fd0bf84871b0f857139c90590939341f1220"},
 ]
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
@@ -766,6 +792,10 @@ pre-commit = [
 priority = [
     {file = "priority-1.3.0-py2.py3-none-any.whl", hash = "sha256:be4fcb94b5e37cdeb40af5533afe6dd603bd665fe9c8b3052610fc1001d5d1eb"},
     {file = "priority-1.3.0.tar.gz", hash = "sha256:6bc1961a6d7fcacbfc337769f1a382c8e746566aaa365e78047abe9f66b2ffbe"},
+]
+pyserial = [
+    {file = "pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0"},
+    {file = "pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb"},
 ]
 python-dotenv = [
     {file = "python-dotenv-0.15.0.tar.gz", hash = "sha256:587825ed60b1711daea4832cf37524dfd404325b7db5e25ebe88c495c9f807a0"},
