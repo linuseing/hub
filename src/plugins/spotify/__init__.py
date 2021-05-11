@@ -1,18 +1,22 @@
 import aiohttp
 import asyncspotify as asp
 
-from typing import Dict, TYPE_CHECKING, Optional, List
+from typing import Dict, TYPE_CHECKING, Optional, List, NewType, Any
 
 from asyncspotify import FullTrack
 
 from data_provider import Setter
 from objects.Event import Event
-from plugin_api import plugin, run_after_init, poll_job, output_service
+from plugin_api import plugin, run_after_init, poll_job, output_service, formatter
+from .collection import Show
 
 from .constants import *
 
 if TYPE_CHECKING:
     from core import Core
+
+
+MediaURI = NewType('MediaURI', str)
 
 
 def playback_stopped_event(track: Optional[asp.track.FullTrack]):
@@ -89,6 +93,8 @@ class Spotify:
         self.song_length: Setter[int] = core.storage.setter_factory(
             "spotify.song_length"
         )
+        self.shows: Setter[Dict[str, Show]] = core.storage.setter_factory("spotify.shows")
+        self.shows.value = {}
 
         core.api.gql.add_mutation("spotifyNext: String", self.gql_next)
         core.api.gql.add_mutation("spotifyPrev: String", self.gql_prev)
@@ -127,6 +133,8 @@ class Spotify:
         self.me = await self.client.get_me()
         self.playlists = await self.client.get_user_playlists(self.me)
         self.playlist_names.value = [playlist.name for playlist in self.playlists]
+        await self._get_podcasts()
+        print(await self._get_latest_episode('The Daily'))
         await self._update_devices()
 
     @poll_job(1)
@@ -239,6 +247,34 @@ class Spotify:
                 json={"device_ids": [device_id]},
                 headers=self.auth.header,
             )
+
+    async def _get_podcasts(self):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                "https://api.spotify.com/v1/me/shows",
+                headers=self.auth.header
+            ) as resp:
+                shows = await resp.json()
+                for show_info in shows['items']:
+                    show = Show(
+                        show_info['show']['name'],
+                        show_info['show']['id'],
+                    )
+                    self.shows.value[show.name] = show
+
+    async def _get_latest_episode(self, show: str) -> MediaURI:
+        async with aiohttp.ClientSession() as session:
+            _id = self.shows.value[show].id
+            async with session.get(
+                f"https://api.spotify.com/v1/shows/{_id}/episodes",
+                headers=self.auth.header
+            ) as resp:
+                json = await resp.json()
+                return json['items'][0]['uri']
+
+    @formatter('spotify.get_latest_episode')
+    async def f1(self, _in: Any, show: str) -> MediaURI:
+        return await self._get_latest_episode(show)
 
     async def _update_track(self):
         if self.context.track is None and self.currently_playing is not None:
