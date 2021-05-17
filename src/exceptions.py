@@ -38,3 +38,7 @@ class NotAuthorizedError(Exception):
         self.msg = msg
         self.context = context
         self.scope = scope
+
+
+class Interrupt(Exception):
+    pass

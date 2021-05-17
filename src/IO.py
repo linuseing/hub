@@ -1,6 +1,7 @@
+import logging
 from dataclasses import dataclass
 
-from exceptions import ServiceNotFoundError, ConfigError, FormatterNotFound
+from exceptions import ServiceNotFoundError, ConfigError, FormatterNotFound, Interrupt
 from helper import package_loader
 from helper.werkzeug import is_coro
 from objects.Context import Context
@@ -43,6 +44,9 @@ class Formatter:
             "outType": str(self.docs["out_type"]),
             "config": self.docs["config"],
         }
+
+
+LOGGER = logging.getLogger("IO")
 
 
 class IO:
@@ -179,8 +183,11 @@ class IO:
             formatter = self.build_pipe(formatter)
 
             async def handler(_in, context):
-                _in = await formatter(_in)
-                await _handler(_in, context)
+                try:
+                    _in = await formatter(_in)
+                    await _handler(_in, context)
+                except Interrupt:
+                    pass
 
             return handler
         return _handler
