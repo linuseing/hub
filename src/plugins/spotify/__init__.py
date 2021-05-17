@@ -8,6 +8,7 @@ from asyncspotify import FullTrack
 from data_provider import Setter
 from objects.Event import Event
 from plugin_api import plugin, run_after_init, poll_job, output_service, formatter
+from .auth import ServiceAuth
 from .collection import Show
 
 from .constants import *
@@ -52,7 +53,8 @@ class Spotify:
         self.scopes = asp.Scope.all()
         self.currently_playing: Optional[asp.track.FullTrack] = None
         self.playlists = []
-        self.auth = asp.EasyAuthorizationCodeFlow(
+        self.auth = ServiceAuth(
+            core,
             client_id="e4e80f0e27f8414c811c3c654c421103",
             client_secret="76e45ae197ce447aa341da133312b39b",
             scope=self.scopes,
@@ -133,11 +135,10 @@ class Spotify:
         self.me = await self.client.get_me()
         self.playlists = await self.client.get_user_playlists(self.me)
         self.playlist_names.value = [playlist.name for playlist in self.playlists]
-        await self._get_podcasts()
-        print(await self._get_latest_episode('The Daily'))
+        self.shows.value = await self._get_podcasts()
         await self._update_devices()
 
-    @poll_job(1)
+    # @poll_job(1)
     async def update(self):
         try:
             await self.client.refresh()
@@ -248,19 +249,21 @@ class Spotify:
                 headers=self.auth.header,
             )
 
-    async def _get_podcasts(self):
+    async def _get_podcasts(self) -> Dict[str, Show]:
+        shows: Dict[str, Show] = {}
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 "https://api.spotify.com/v1/me/shows",
                 headers=self.auth.header
             ) as resp:
-                shows = await resp.json()
-                for show_info in shows['items']:
+                shows_json = await resp.json()
+                for show_info in shows_json['items']:
                     show = Show(
                         show_info['show']['name'],
                         show_info['show']['id'],
                     )
-                    self.shows.value[show.name] = show
+                    shows[show.name] = show
+        return shows
 
     async def _get_latest_episode(self, show: str) -> MediaURI:
         async with aiohttp.ClientSession() as session:
@@ -317,7 +320,14 @@ class Spotify:
         if self.context.track is not None:
             self.progress.value = int(self.context.progress.total_seconds())
 
+    # @poll_job(10)
     async def _update_devices(self):
         devices = await self.client.get_devices()
         self._devices = {device.name: device for device in devices}
         self.devices.value = self._devices
+
+    # @poll_job(60)
+    async def _update_library(self):
+        self.playlists = await self.client.get_user_playlists(self.me)
+        self.playlist_names.value = [playlist.name for playlist in self.playlists]
+        self.shows.value = await self._get_podcasts()
