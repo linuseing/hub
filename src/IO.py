@@ -186,7 +186,7 @@ class IO:
                 try:
                     _in = await formatter(_in)
                     await _handler(_in, context)
-                except Interrupt:
+                except Interrupt:  # a pre-processor may call 'raise Interrupt' to stop the execution of an handler
                     pass
 
             return handler
