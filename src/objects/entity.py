@@ -30,6 +30,10 @@ class Entity:
     def __repr__(self):
         return f"<Entity {self.name} ({self.type})>"
 
+    @property
+    def state(self):
+        return dict(map(lambda c: (c.name, c.state), self.components.values()))
+
     def add_component(self, name: str, component: Component):
         self.components[name] = component
 
