@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Dict, Callable, Type, Union, Optional, Any, List
+import logging
 
 from asyncio_multisubscriber_queue import MultisubscriberQueue
 
@@ -10,7 +11,7 @@ from components.switch import Switch
 from constants.entity_types import EntityType
 from constants.entity_builder import *
 from constants.events import ENTITY_CREATED, ENTITY_STATE_CHANGED
-from exceptions import ConfigError, EntityNotFound
+from exceptions import ConfigError, EntityNotFound, ComponentNotFound
 from helper import yaml_utils
 from objects.Context import Context
 from objects.Event import Event
@@ -23,6 +24,9 @@ if TYPE_CHECKING:
     from core import Core
 
 Builder = Callable[[Any, str, Dict, Dict], Entity]
+
+
+LOGGER = logging.getLogger('EntityRegistry')
 
 
 def created_event(entity: Entity, user: User):
@@ -94,14 +98,20 @@ class EntityRegistry:
         target: Any,
         context: Context = None,
     ):
-        if not context:
-            context = Context.admin()
-        entity = self.get_entity(entity)
-        new_state: Any = await entity.call_method(component, method, target, context)
-        await self.state_queue.put(entity)
-        self.dispatch_state_change_event(
-            entity, component, new_state, context, context=context
-        )
+        try:
+            if not context:
+                context = Context.admin()
+            entity = self.get_entity(entity)
+            new_state: Any = await entity.call_method(component, method, target, context)
+            await self.state_queue.put(entity)
+            self.dispatch_state_change_event(
+                entity, component, new_state, context, context=context
+            )
+        except EntityNotFound:
+            LOGGER.error(f"couldn't call method {component}.{method}, as the entity '{entity}' doesnt exist")
+        except ComponentNotFound:
+            LOGGER.error(
+                f"couldn't call method {method}, as there is not '{component}' component attached to '{entity}'")
 
     def dispatch_state_change_event(
         self,
