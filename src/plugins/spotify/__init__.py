@@ -106,6 +106,8 @@ class Spotify:
         )
         core.api.gql.add_mutation("spotifyTogglePlayback: Boolean", self.gql_toggle)
 
+        self._setup = False
+
     async def gql_next(self, *_):
         self.core.add_job(self.next_song)
         event: Event[FullTrack] = await self.core.bus.wait_for(EVENT_TRACK_CHANGE)
@@ -138,8 +140,13 @@ class Spotify:
         self.shows.value = await self._get_podcasts()
         await self._update_devices()
 
-    # @poll_job(1)
+        self._setup = True
+
+    @poll_job(1)
     async def update(self):
+        if not self._setup:  # not yet authenticated
+            return
+
         try:
             await self.client.refresh()
 
@@ -320,14 +327,20 @@ class Spotify:
         if self.context.track is not None:
             self.progress.value = int(self.context.progress.total_seconds())
 
-    # @poll_job(10)
+    @poll_job(10)
     async def _update_devices(self):
+        if not self._setup:  # not yet authenticated
+            return
+
         devices = await self.client.get_devices()
         self._devices = {device.name: device for device in devices}
         self.devices.value = self._devices
 
-    # @poll_job(60)
+    @poll_job(60)
     async def _update_library(self):
+        if not self._setup:  # not yet authenticated
+            return
+
         self.playlists = await self.client.get_user_playlists(self.me)
         self.playlist_names.value = [playlist.name for playlist in self.playlists]
         self.shows.value = await self._get_podcasts()
