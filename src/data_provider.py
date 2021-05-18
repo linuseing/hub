@@ -20,6 +20,10 @@ class DataEntry(Generic[T]):
 X = TypeVar("X")
 
 
+class EntryNotFound(Exception):
+    pass
+
+
 class Setter(Generic[X]):
     def __init__(self, entry, storage):
         self.storage: Storage = storage
@@ -40,21 +44,37 @@ class Storage:
 
         self.storage: defaultdict[str, DataEntry] = defaultdict(lambda: DataEntry(), {})
 
-    def update_value(self, key, value):
-        if self.get_value(key) is not value:
-            self.storage[key].value = value
-            for callback in self.storage[key].subscriber:
-                self.core.add_job(callback, value)
+    def create_entry(self, key, initial_value=None):
+        """Creates an ew DataEntry object in Storage.
+        Overrides existing object when key already exists!
+        """
+        self.storage[key] = DataEntry(init_value=initial_value)
 
-            self.core.add_job(self.storage[key].queue.put, value)
+    def update_value(self, key, value):
+        """Update as stored value.
+        If the key is not found, a new entry will be created
+        """
+        if key in self.storage:
+            if self.get_value(key) is not value:
+                self.storage[key].value = value
+                for callback in self.storage[key].subscriber:
+                    self.core.add_job(callback, value)
+
+                self.core.add_job(self.storage[key].queue.put, value)
+        else:
+            self.create_entry(key, initial_value=value)
 
     def get_value(self, key):
         """
         fetches a value
         :key: value key
         :return: returns the stored value
+        :raises EntryNotFound: when no value is associated with the given key
         """
-        return self.storage[key].value
+        try:
+            return self.storage[key].value
+        except KeyError:
+            raise EntryNotFound
 
     async def subscribe(self, key: str):
         async for value in self.storage[key].queue.subscribe():

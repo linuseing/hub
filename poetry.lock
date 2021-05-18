@@ -146,6 +146,17 @@ colorama = ["colorama (>=0.4.3)"]
 d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
+name = "casttube"
+version = "0.2.1"
+description = "YouTube chromecast api"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+requests = "*"
+
+[[package]]
 name = "cfgv"
 version = "3.2.0"
 description = "Validate configuration and produce human readable error messages."
@@ -312,6 +323,14 @@ optional = false
 python-versions = ">=3.4"
 
 [[package]]
+name = "ifaddr"
+version = "0.1.7"
+description = "Cross-platform network interface and IP address enumeration library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "multidict"
 version = "5.1.0"
 description = "multidict implementation"
@@ -379,6 +398,30 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "protobuf"
+version = "3.16.0"
+description = "Protocol Buffers"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = ">=1.9"
+
+[[package]]
+name = "pychromecast"
+version = "9.1.2"
+description = "Python module to talk to Google Chromecast."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+casttube = ">=0.2.0"
+protobuf = ">=3.0.0"
+zeroconf = ">=0.25.1"
+
+[[package]]
 name = "pyserial"
 version = "3.5"
 description = "Python Serial Port Extension"
@@ -425,10 +468,22 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "requests"
+version = "2.15.1"
+description = "Python HTTP for Humans."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+security = ["cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)"]
+socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
+
+[[package]]
 name = "six"
 version = "1.15.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -567,10 +622,21 @@ python-versions = ">=3.6"
 idna = ">=2.0"
 multidict = ">=4.0"
 
+[[package]]
+name = "zeroconf"
+version = "0.30.0"
+description = "Pure Python Multicast DNS Service Discovery Library (Bonjour/Avahi compatible)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+ifaddr = ">=0.1.7"
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "45941e6a85debae829ad0315bfdec53e64fac2e0aeaa982fa2e0e09c855e6b63"
+content-hash = "7cdf81d3502b2c2bfce44710da880c039a1cadef129bd8278b773468fddec23f"
 
 [metadata.files]
 aioconsole = [
@@ -654,6 +720,10 @@ attrs = [
 black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
+casttube = [
+    {file = "casttube-0.2.1-py3-none-any.whl", hash = "sha256:36f118007f9eead3959cf30de03c1640b53a263569ff2a3971c0521826c835b2"},
+    {file = "casttube-0.2.1.tar.gz", hash = "sha256:54d2af8c7949aa9c5db87fb11ef0a478a5d3e7ac6d2d2ac8dd1711e3a516fc82"},
+]
 cfgv = [
     {file = "cfgv-3.2.0-py2.py3-none-any.whl", hash = "sha256:32e43d604bbe7896fe7c248a9c2276447dbef840feb28fe20494f62af110211d"},
     {file = "cfgv-3.2.0.tar.gz", hash = "sha256:cf22deb93d4bcf92f345a5c3cd39d3d41d6340adc60c78bbbd6588c384fda6a1"},
@@ -731,6 +801,10 @@ idna = [
     {file = "idna-3.1-py3-none-any.whl", hash = "sha256:5205d03e7bcbb919cc9c19885f9920d622ca52448306f2377daede5cf3faac16"},
     {file = "idna-3.1.tar.gz", hash = "sha256:c5b02147e01ea9920e6b0a3f1f7bb833612d507592c837a6c49552768f4054e1"},
 ]
+ifaddr = [
+    {file = "ifaddr-0.1.7-py2.py3-none-any.whl", hash = "sha256:d1f603952f0a71c9ab4e705754511e4e03b02565bc4cec7188ad6415ff534cd3"},
+    {file = "ifaddr-0.1.7.tar.gz", hash = "sha256:1f9e8a6ca6f16db5a37d3356f07b6e52344f6f9f7e806d618537731669eb1a94"},
+]
 multidict = [
     {file = "multidict-5.1.0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:b7993704f1a4b204e71debe6095150d43b2ee6150fa4f44d6d966ec356a8d61f"},
     {file = "multidict-5.1.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:9dd6e9b1a913d096ac95d0399bd737e00f2af1e1594a787e00f7975778c8b2bf"},
@@ -792,6 +866,32 @@ pre-commit = [
 priority = [
     {file = "priority-1.3.0-py2.py3-none-any.whl", hash = "sha256:be4fcb94b5e37cdeb40af5533afe6dd603bd665fe9c8b3052610fc1001d5d1eb"},
     {file = "priority-1.3.0.tar.gz", hash = "sha256:6bc1961a6d7fcacbfc337769f1a382c8e746566aaa365e78047abe9f66b2ffbe"},
+]
+protobuf = [
+    {file = "protobuf-3.16.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:d3b9988f1a3591d900a090887ae4c41592e252bef5b249ad7e1fc46c21617534"},
+    {file = "protobuf-3.16.0-cp27-cp27mu-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:8ec649186f5443cab12692438190988bb9058dbfa5851d10d59a1c7214159a5f"},
+    {file = "protobuf-3.16.0-cp35-cp35m-macosx_10_9_intel.whl", hash = "sha256:9191e97d92b62424423ce5a5604047fd76c80a4f463fbd10c9d8b82928f152cf"},
+    {file = "protobuf-3.16.0-cp35-cp35m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:49dd3550bb42050d1676378c3fef91ff058d7023b77ac6f3179eb2a1c6c562d7"},
+    {file = "protobuf-3.16.0-cp35-cp35m-win32.whl", hash = "sha256:675d8e7463e03cf8343792935d62b80d90839d56a228c941dfdddda946eea066"},
+    {file = "protobuf-3.16.0-cp35-cp35m-win_amd64.whl", hash = "sha256:b85ad5fe54163350067a53c0c170211c9f752dd4b4d8f339eb5aea8e987614a9"},
+    {file = "protobuf-3.16.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:bc1ba824ff750c2ead1e7b8dd049bb5ddf8658d056cf4b989f04c68b049a47a7"},
+    {file = "protobuf-3.16.0-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:80b233553ff500378becc372721541902c567e51b2654b68513d7b89c43dbc4b"},
+    {file = "protobuf-3.16.0-cp36-cp36m-win32.whl", hash = "sha256:2cec059f4821c8f58890920a5c8a828ea027d46d5b18cb5e9dd4c727c65a2aa0"},
+    {file = "protobuf-3.16.0-cp36-cp36m-win_amd64.whl", hash = "sha256:ef9c2d0b3c0935725b547175745ceacb86f4d410b1e984d47e320c9efb1936c5"},
+    {file = "protobuf-3.16.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:c0f760adc1dd3dfe6d13af529b2ab42bb3fff1a2a00a6873b583b4ce0048ddff"},
+    {file = "protobuf-3.16.0-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:c94ee9832fded92a11920b10d75c5aa7f4ef910b0bd463c039e102c8d7eb2c46"},
+    {file = "protobuf-3.16.0-cp37-cp37m-win32.whl", hash = "sha256:8c0d3a5aa3412a440a9384349f6095991e8a5012e619cf5f57f042829f65cdb3"},
+    {file = "protobuf-3.16.0-cp37-cp37m-win_amd64.whl", hash = "sha256:11301f1993f67dc81fc5c4756623652c899f7b5574b1e095d63bfc78347b11f3"},
+    {file = "protobuf-3.16.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:4bb7064727953d9187f6806230968b98e1ce4ec03bd737600e8380a9e5a6ac15"},
+    {file = "protobuf-3.16.0-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:bf9a5caa0e0093552c2cc6051facef15b9c9ad4b1bde70430964edf99eaf2dad"},
+    {file = "protobuf-3.16.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:c356d038a4e4cf52ccd7aff8022fc6a76daa0be5ecf2517ed75b87d32be0405d"},
+    {file = "protobuf-3.16.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:648178381d9dbbc736849443151533ab958e7b8bcbd658a62ad10906552fddcc"},
+    {file = "protobuf-3.16.0-py2.py3-none-any.whl", hash = "sha256:be831508b9207156309a88b9d115dbae0caa4a987b05f1aa4fed4c5ac53ec51b"},
+    {file = "protobuf-3.16.0.tar.gz", hash = "sha256:228eecbedd46d75010f1e0f8ce34dbcd11ae5a40c165a9fc9d330a58aa302818"},
+]
+pychromecast = [
+    {file = "PyChromecast-9.1.2-py2.py3-none-any.whl", hash = "sha256:95dd9098a70c1480a8a0093859baa630a146cbb2f12cd2d5d3dbe4cf2a43f6bc"},
+    {file = "PyChromecast-9.1.2.tar.gz", hash = "sha256:907656cea46d39d0e93ec815979578ef4fb6f655fd8bf4e88e6421fcd7824e85"},
 ]
 pyserial = [
     {file = "pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0"},
@@ -870,6 +970,10 @@ regex = [
     {file = "regex-2021.3.17-cp39-cp39-win32.whl", hash = "sha256:dc9963aacb7da5177e40874585d7407c0f93fb9d7518ec58b86e562f633f36cd"},
     {file = "regex-2021.3.17-cp39-cp39-win_amd64.whl", hash = "sha256:a0d04128e005142260de3733591ddf476e4902c0c23c1af237d9acf3c96e1b38"},
     {file = "regex-2021.3.17.tar.gz", hash = "sha256:4b8a1fb724904139149a43e172850f35aa6ea97fb0545244dc0b805e0154ed68"},
+]
+requests = [
+    {file = "requests-2.15.1-py2.py3-none-any.whl", hash = "sha256:ff753b2196cd18b1bbeddc9dcd5c864056599f7a7d9a4fb5677e723efa2b7fb9"},
+    {file = "requests-2.15.1.tar.gz", hash = "sha256:e5659b9315a0610505e050bb7190bf6fa2ccee1ac295f2b760ef9d8a03ebbb2e"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
@@ -1014,4 +1118,8 @@ yarl = [
     {file = "yarl-1.6.3-cp39-cp39-win32.whl", hash = "sha256:5b883e458058f8d6099e4420f0cc2567989032b5f34b271c0827de9f1079a424"},
     {file = "yarl-1.6.3-cp39-cp39-win_amd64.whl", hash = "sha256:4953fb0b4fdb7e08b2f3b3be80a00d28c5c8a2056bb066169de00e6501b986b6"},
     {file = "yarl-1.6.3.tar.gz", hash = "sha256:8a9066529240171b68893d60dca86a763eae2139dd42f42106b03cf4b426bf10"},
+]
+zeroconf = [
+    {file = "zeroconf-0.30.0-py3-none-any.whl", hash = "sha256:4dedcf1d46404702fcbb8d40750afc47c4edcdb8ef16db461cb3355989a5eadb"},
+    {file = "zeroconf-0.30.0.tar.gz", hash = "sha256:7a5a6366ae05a48db04dfd5c8882ee98a13f2d0e1fc6d09a5f1bd0a3d1d109c7"},
 ]

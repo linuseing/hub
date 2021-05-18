@@ -1,7 +1,0 @@
-type: Switch
-control: hue.set
-switch:
-  device: Projektor
-settings:
-  alexa:
-  grid: 1

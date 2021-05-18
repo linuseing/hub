@@ -1,7 +1,10 @@
 type: Lamp
 control: mqtt.publish
 switch:
-  topic: bar_test_topic
+  pipe:
+    - spotify.get_latest_episode:
+        show: 'The Daily'
+  topic: test
 settings:
   alexa:
   grid: 1
