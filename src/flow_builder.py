@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Dict, List, TYPE_CHECKING, Union, Any
 
 from constants.flow_loader import *
-from objects.OutputService import OutputService
 from objects.flow import Node, Flow
 
 
@@ -24,13 +23,10 @@ def build_flow(syntax: FlowSyntax, core, name, config, nodes: Dict[str, Node] = 
 def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, Any]]]) -> Flow:
     settings = DEFAULT_SETTINGS_MICRO
 
-    has_config = 0
-
     if list(config[0].keys())[0] == CONFIG:
         settings = config.pop(0)[CONFIG]
-        has_config = 1
 
-    flow = Flow(name)
+    flow = Flow(core, name)
     flow.suspend_on_error = settings.get(SUSPEND_ON_ERROR, False)
 
     trigger: str
@@ -39,8 +35,9 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
 
     core.io.setup_input(trigger, trigger_conf, flow.entry_point, None)
 
-    for node_id, node_conf in enumerate(config[1+has_config:], start=1):
-        print(1+has_config)
+    print(config[1:])
+
+    for node_id, node_conf in enumerate(config[1:], start=1):
         pass_through = True
 
         service: str = (
@@ -56,9 +53,10 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
         else:
             handler = core.io.build_handler(service, list(node_conf.values())[0])
 
-        node = Node(handler, None, pass_through, next_nodes=[str(node_id + 1)])
+        node = Node(handler, None, pass_through, next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [])
 
         flow.add_node(str(node_id), node)
+    flow.root_node = "1"
 
     return flow
 

@@ -56,7 +56,7 @@ class Core:
         self.bus: EventBus = EventBus(self)
         self.plugins = load_plugins(self)
         self.registry: EntityRegistry = EntityRegistry(self)
-        # self.engine = FlowEngine(self)
+        self.engine = FlowEngine(self)
 
         self.core_state = CoreState.RUNNING
 
