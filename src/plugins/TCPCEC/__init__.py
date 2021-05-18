@@ -1,5 +1,6 @@
 import asyncio
 import math
+import logging
 from asyncio import StreamWriter, StreamReader, CancelledError, Condition, Handle, Task, QueueEmpty
 from dataclasses import dataclass
 from enum import Enum
@@ -27,6 +28,9 @@ class CECCommand(Enum):
 class Command:
     command: CECCommand
     callback: Optional[Callable]
+
+
+LOGGER = logging.getLogger("TCP-CEC")
 
 
 @plugin("tcp-cec")
@@ -68,9 +72,9 @@ class TCPCEC:
         try:
             reader, writer = await asyncio.wait_for(fut, timeout=2, loop=self.core.event_loop)
             self._manager = self.core.event_loop.create_task(self.manager(reader, writer))
-            print('connected')
+            LOGGER.debug('connected to bridge')
         except asyncio.TimeoutError:
-            print('retry')
+            LOGGER.warning('connection timeout, retry in 3 seconds')
             await asyncio.sleep(3)
             self.core.add_job(self.open)
 
