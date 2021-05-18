@@ -37,7 +37,6 @@ class HUE:
 
         for sensor in self.bridge.sensors.values():
             if type(sensor) is aiohue.sensors.ZLLSwitchSensor:
-                print(sensor.name)
                 self._sensor_states[sensor.name] = sensor.state
 
         self.core.timer.periodic_job(self.config[POLL_INTERVAL], self.update)
