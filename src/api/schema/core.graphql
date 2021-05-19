@@ -2,3 +2,16 @@ type Event {
     eventType: String!
     eventContent: Any
 }
+
+type OutputService {
+    name: String!
+    description: String!
+    args: [ArgDocs]!
+}
+
+type ArgDocs {
+    doc: String!
+    type: String!
+    default: Any!
+    name: String!
+}

@@ -44,6 +44,7 @@ def build_doc(func: Callable):
         description=f'{docs.short_description} {docs.long_description if docs.long_description else ""}'.strip(),
         args={
             arg.arg_name: Arg(
+                name=arg.arg_name,
                 doc=arg.description,
                 type=args.annotations.get(arg.arg_name, None),
                 default=None
@@ -102,6 +103,7 @@ def load_plugins(core):
                         core.io.add_output_service(
                             service_name,
                             OutputService(
+                                name=service_name,
                                 handler=callback,
                                 schema=schema,
                                 input_validator=validator,

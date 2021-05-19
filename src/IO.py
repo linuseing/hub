@@ -64,6 +64,15 @@ class IO:
 
         self.load_formatter()
 
+        core.api.gql.add_query("availableOutputServices: [OutputService]!", self.handle_available_output_services)
+        core.api.gql.add_query("availableInputServices: [String]!", self.handle_available_input_services)
+
+    async def handle_available_output_services(self, *_):
+        return list(map(lambda s: s.gql, self._output_services.values()))
+
+    async def handle_available_input_services(self, *_):
+        return list(self._input_services.keys())
+
     def load_formatter(self):
         import config.formatter as formatter
 
