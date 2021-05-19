@@ -99,7 +99,7 @@ class Alexa:
             url = "/api/scenes"
 
             async def get(self, request: web.Request):
-                return self.json({'scenes': alexa.core.registry.get_scenes()})
+                return self.json({"scenes": alexa.core.registry.get_scenes()})
 
         return AlexaDevices
 

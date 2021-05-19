@@ -1,7 +1,15 @@
 import asyncio
 import math
 import logging
-from asyncio import StreamWriter, StreamReader, CancelledError, Condition, Handle, Task, QueueEmpty
+from asyncio import (
+    StreamWriter,
+    StreamReader,
+    CancelledError,
+    Condition,
+    Handle,
+    Task,
+    QueueEmpty,
+)
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, TYPE_CHECKING, Optional, Callable
@@ -66,15 +74,17 @@ class TCPCEC:
     @run_after_init
     async def open(self):
         self._close_event.clear()
-        fut = asyncio.open_connection(
-                "192.168.2.199", 9526
-            )
+        fut = asyncio.open_connection("192.168.2.199", 9526)
         try:
-            reader, writer = await asyncio.wait_for(fut, timeout=2, loop=self.core.event_loop)
-            self._manager = self.core.event_loop.create_task(self.manager(reader, writer))
-            LOGGER.debug('connected to bridge')
+            reader, writer = await asyncio.wait_for(
+                fut, timeout=2, loop=self.core.event_loop
+            )
+            self._manager = self.core.event_loop.create_task(
+                self.manager(reader, writer)
+            )
+            LOGGER.debug("connected to bridge")
         except asyncio.TimeoutError:
-            LOGGER.warning('connection timeout, retry in 3 seconds')
+            LOGGER.warning("connection timeout, retry in 3 seconds")
             await asyncio.sleep(3)
             self.core.add_job(self.open)
 
@@ -99,17 +109,12 @@ class TCPCEC:
             )
         else:
             self._target = None
-            self.core.bus.dispatch(Event(
-                "cec.set_volume",
-                self.volume
-            ))
+            self.core.bus.dispatch(Event("cec.set_volume", self.volume))
 
     async def manager(self, reader, writer: StreamWriter):
-        self.core.bus.dispatch(Event(
-            event_type="cec.reconnected",
-            event_content=None,
-            context=None
-        ))
+        self.core.bus.dispatch(
+            Event(event_type="cec.reconnected", event_content=None, context=None)
+        )
         while True:
             try:
                 done, pending = await asyncio.wait(
@@ -148,10 +153,7 @@ class TCPCEC:
                 pass
 
     async def set_volume(self, volume):
-        self.core.bus.dispatch(Event(
-            "cec.setting_volume",
-            volume
-        ))
+        self.core.bus.dispatch(Event("cec.setting_volume", volume))
         running = True if self._target is not None else False
         self._target = volume
         if not running:

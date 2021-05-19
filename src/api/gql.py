@@ -45,10 +45,7 @@ class GraphAPI:
             AVAILABLE_FORMATTER,
             lambda *_: list(map(lambda x: x.gql(), core.io.formatter)),
         )
-        self.query.set_field(
-            COMMIT_ID,
-            lambda *_: os.getenv("COMMIT", 'unknown')
-        )
+        self.query.set_field(COMMIT_ID, lambda *_: os.getenv("COMMIT", "unknown"))
 
         self.query.set_field(ENTITY, self.get_entity)
         self.query.set_field(ENTITIES, self.get_entities)

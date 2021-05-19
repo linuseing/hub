@@ -10,7 +10,9 @@ class FlowSyntax(Enum):
     full = 1
 
 
-def build_flow(syntax: FlowSyntax, core, name, config, nodes: Dict[str, Node] = None) -> Flow:
+def build_flow(
+    syntax: FlowSyntax, core, name, config, nodes: Dict[str, Node] = None
+) -> Flow:
     if not nodes:
         nodes = {}
 
@@ -20,7 +22,9 @@ def build_flow(syntax: FlowSyntax, core, name, config, nodes: Dict[str, Node] = 
         return _build_default_flow(core, name, config)
 
 
-def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, Any]]]) -> Flow:
+def _build_micro_flow(
+    name, core, config: List[Union[Dict[str, Dict], Dict[str, Any]]]
+) -> Flow:
     settings = DEFAULT_SETTINGS_MICRO
 
     if list(config[0].keys())[0] == CONFIG:
@@ -51,7 +55,12 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
         else:
             handler = core.io.build_handler(service, list(node_conf.values())[0])
 
-        node = Node(handler, None, pass_through, next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [])
+        node = Node(
+            handler,
+            None,
+            pass_through,
+            next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
+        )
 
         flow.add_node(str(node_id), node)
     flow.root_node = "1"

@@ -40,10 +40,7 @@ class EventBus:
 
         core.io.add_input_service(
             "bus.listen",
-            InputService(
-                lambda c, event_type: self.listen(event_type, c),
-                None
-            )
+            InputService(lambda c, event_type: self.listen(event_type, c), None),
         )
 
         self._event_stream = MultisubscriberQueue()

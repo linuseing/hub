@@ -36,5 +36,7 @@ class FlowEngine:
 
     def init_from_config(self):
         for config, file_name in for_yaml_in(f"{self.core.location}/config/flows"):
-            flow = flow_builder.build_flow(FlowSyntax.micro, file_name[:-5], self.core, config)
+            flow = flow_builder.build_flow(
+                FlowSyntax.micro, file_name[:-5], self.core, config
+            )
             self._flows[file_name[:-5]] = flow

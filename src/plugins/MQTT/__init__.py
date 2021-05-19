@@ -87,7 +87,12 @@ class MQTT:
 
     @output_service("mqtt.publish", None, None)
     async def async_publish(
-        self, payload: Any, context: Context, topic: str, qos: int = 0, retain: bool = True
+        self,
+        payload: Any,
+        context: Context,
+        topic: str,
+        qos: int = 0,
+        retain: bool = True,
     ):
         """
         Publish a message over MQTT

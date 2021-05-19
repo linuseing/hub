@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 Builder = Callable[[Any, str, Dict, Dict], Entity]
 
 
-LOGGER = logging.getLogger('EntityRegistry')
+LOGGER = logging.getLogger("EntityRegistry")
 
 
 def created_event(entity: Entity, user: User):
@@ -67,8 +67,8 @@ class EntityRegistry:
                 "registry.activate_scene",
                 self.activate_scene_handler,
                 None,
-                doc=build_doc(self.activate_scene_handler)
-            )
+                doc=build_doc(self.activate_scene_handler),
+            ),
         )
 
         core.io.add_output_service(
@@ -77,8 +77,8 @@ class EntityRegistry:
                 "registry.deactivate_scene",
                 self.deactivate_scene_handler,
                 None,
-                doc=build_doc(self.deactivate_scene_handler)
-            )
+                doc=build_doc(self.deactivate_scene_handler),
+            ),
         )
 
         core.io.add_output_service(
@@ -87,8 +87,8 @@ class EntityRegistry:
                 "registry.set_state",
                 self.set_state,
                 None,
-                doc=build_doc(self.set_state)
-            )
+                doc=build_doc(self.set_state),
+            ),
         )
 
     async def set_state(self, target: Any, context: Context, component: str = ""):
@@ -164,16 +164,21 @@ class EntityRegistry:
             if not context:
                 context = Context.admin()
             entity = self.get_entity(entity)
-            new_state: Any = await entity.call_method(component, method, target, context)
+            new_state: Any = await entity.call_method(
+                component, method, target, context
+            )
             await self.state_queue.put(entity)
             self.dispatch_state_change_event(
                 entity, component, new_state, context, context=context
             )
         except EntityNotFound:
-            LOGGER.error(f"couldn't call method {component}.{method}, as the entity '{entity}' doesnt exist")
+            LOGGER.error(
+                f"couldn't call method {component}.{method}, as the entity '{entity}' doesnt exist"
+            )
         except ComponentNotFound:
             LOGGER.error(
-                f"couldn't call method {method}, as there is not '{component}' component attached to '{entity}'")
+                f"couldn't call method {method}, as there is not '{component}' component attached to '{entity}'"
+            )
 
     def dispatch_state_change_event(
         self,
@@ -249,12 +254,12 @@ class EntityRegistry:
             name = config.get("name", None) or file[:-5]
             scene = Scene(self.core)
 
-            if 'on' in config:
-                scene.states = config['on']
-            if 'off' in config:
-                scene.deactivate_states = config['off']
+            if "on" in config:
+                scene.states = config["on"]
+            if "off" in config:
+                scene.deactivate_states = config["off"]
 
-            if 'off' not in config and 'on' not in config:
+            if "off" not in config and "on" not in config:
                 scene.states = config
 
             self._scenes[name] = scene

@@ -66,21 +66,27 @@ class IO:
 
         core.api.gql.add_query(
             "availableOutputServices(domain: String, contains: String): [OutputService]!",
-            self.handle_available_output_services
+            self.handle_available_output_services,
         )
-        core.api.gql.add_query("availableInputServices: [String]!", self.handle_available_input_services)
+        core.api.gql.add_query(
+            "availableInputServices: [String]!", self.handle_available_input_services
+        )
 
     async def handle_available_output_services(self, *_, domain=None, contains=None):
         if domain:
-            return list(filter(
-                lambda x: x['name'].split('.')[0] == domain,
-                map(lambda s: s.gql, self._output_services.values())
-            ))
+            return list(
+                filter(
+                    lambda x: x["name"].split(".")[0] == domain,
+                    map(lambda s: s.gql, self._output_services.values()),
+                )
+            )
         if contains:
-            return list(filter(
-                lambda x: contains in x['name'],
-                map(lambda s: s.gql, self._output_services.values())
-            ))
+            return list(
+                filter(
+                    lambda x: contains in x["name"],
+                    map(lambda s: s.gql, self._output_services.values()),
+                )
+            )
         return list(map(lambda s: s.gql, self._output_services.values()))
 
     async def handle_available_input_services(self, *_):
@@ -162,21 +168,23 @@ class IO:
             current_state = _in
             for formatter in pipe:
                 if type(formatter) is dict:
-                    if is_coro(
-                        self._formatter[list(formatter.keys())[0]].handler
-                    ):
-                        current_state = await self._formatter[list(formatter.keys())[0]].handler(
-                            current_state, **list(formatter.values())[0]
-                        )
+                    if is_coro(self._formatter[list(formatter.keys())[0]].handler):
+                        current_state = await self._formatter[
+                            list(formatter.keys())[0]
+                        ].handler(current_state, **list(formatter.values())[0])
                     else:
-                        current_state = self._formatter[list(formatter.keys())[0]].handler(
-                            current_state, **list(formatter.values())[0]
-                        )
+                        current_state = self._formatter[
+                            list(formatter.keys())[0]
+                        ].handler(current_state, **list(formatter.values())[0])
                 elif type(formatter) is str:
                     if is_coro(self._formatter[formatter].handler):
-                        current_state = await self._formatter[formatter].handler(current_state)
+                        current_state = await self._formatter[formatter].handler(
+                            current_state
+                        )
                     else:
-                        current_state = self._formatter[formatter].handler(current_state)
+                        current_state = self._formatter[formatter].handler(
+                            current_state
+                        )
 
             return current_state
 

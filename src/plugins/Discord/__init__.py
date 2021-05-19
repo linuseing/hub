@@ -19,11 +19,11 @@ def get_guild_name(guild_id) -> str:
 
 def get_guild_channel(guild_id) -> List[str]:
     json = requests.get(f"https://discord.com/api/guilds/{guild_id}/widget.json").json()
-    return list(map(lambda x: x['name'], json['channels']))
+    return list(map(lambda x: x["name"], json["channels"]))
 
 
 def resolve_channel_id(json, channel_id) -> str:
-    return list(filter(lambda x: x["id"] == channel_id, json['channels']))[0]['name']
+    return list(filter(lambda x: x["id"] == channel_id, json["channels"]))[0]["name"]
 
 
 @plugin("Discord")
@@ -45,20 +45,24 @@ class Discord:
         tasks = []
         async with aiohttp.ClientSession() as session:
             for guild in self.guild_ids:
-                tasks.append(
-                    asyncio.ensure_future(self.update_guild(guild, session))
-                )
+                tasks.append(asyncio.ensure_future(self.update_guild(guild, session)))
 
             await asyncio.gather(*tasks)
 
     @run_after_init
     async def update_guild(self, guild_id, session):
-        async with session.get(f"https://discord.com/api/guilds/{guild_id}/widget.json") as resp:
+        async with session.get(
+            f"https://discord.com/api/guilds/{guild_id}/widget.json"
+        ) as resp:
             json = await resp.json()
             channels = defaultdict(lambda: [], {})
-            for user in json['members']:
-                if channel_id := user.get('channel_id'):
-                    channels[resolve_channel_id(json, str(channel_id))].append(user.get("username"))
+            for user in json["members"]:
+                if channel_id := user.get("channel_id"):
+                    channels[resolve_channel_id(json, str(channel_id))].append(
+                        user.get("username")
+                    )
             for channel, members in channels.items():
                 print(channel, members)
-                self.core.storage.update_value(f"discord.guilds.{json['name']}.{channel}", members)
+                self.core.storage.update_value(
+                    f"discord.guilds.{json['name']}.{channel}", members
+                )

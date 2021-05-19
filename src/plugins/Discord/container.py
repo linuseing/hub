@@ -8,4 +8,3 @@ class ActiveUser:
     status: str
     avatar_url: str
     game: Optional[str] = None
-

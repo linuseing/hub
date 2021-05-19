@@ -15,6 +15,5 @@ color:
 
 
 class TestRegistry(TestCase):
-
     def test_create(self):
         R = EntityRegistry(None)

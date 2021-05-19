@@ -12,7 +12,7 @@ from objects.entity import Entity
 from plugin_api import plugin, rest_endpoint, on
 from plugins.Google.helper import discovery
 
-LOGGER = logging.getLogger('google-home')
+LOGGER = logging.getLogger("google-home")
 
 traits = {
     "brightness": "action.devices.traits.Brightness",
@@ -20,18 +20,19 @@ traits = {
     "switch": "action.devices.traits.OnOff",
 }
 
-types = {
-
-}
+types = {}
 
 trait_factories = {
-    EntityType.LAMP: lambda: ['action.devices.traits.OnOff'],
-    EntityType.LAMP_BRIGHTNESS: lambda: ['action.devices.traits.OnOff', 'action.devices.traits.Brightness'],
+    EntityType.LAMP: lambda: ["action.devices.traits.OnOff"],
+    EntityType.LAMP_BRIGHTNESS: lambda: [
+        "action.devices.traits.OnOff",
+        "action.devices.traits.Brightness",
+    ],
     EntityType.LAMP_RGB: lambda: [
-        'action.devices.traits.OnOff',
-        'action.devices.traits.Brightness',
-        'action.devices.traits.ColorSetting'
-    ]
+        "action.devices.traits.OnOff",
+        "action.devices.traits.Brightness",
+        "action.devices.traits.ColorSetting",
+    ],
 }
 
 
@@ -43,8 +44,7 @@ class DeviceConfig(TypedDict):
 
 @plugin("Google")
 class Google:
-
-    def __init__(self, core: 'Core', config: Optional[Dict] = None):
+    def __init__(self, core: "Core", config: Optional[Dict] = None):
         if config is None:
             config = {}
         self.config = config
@@ -57,9 +57,9 @@ class Google:
             return
 
         config: DeviceConfig = {
-            'name': entity.settings["google"].get("name", entity.name),
-            'type': entity.settings["google"].get("type", types[entity.type]),
-            'traits': trait_factories[entity.type]()
+            "name": entity.settings["google"].get("name", entity.name),
+            "type": entity.settings["google"].get("type", types[entity.type]),
+            "traits": trait_factories[entity.type](),
         }
 
         self.entities[entity.name] = config
@@ -73,14 +73,11 @@ class Google:
                 response = []
                 for device in google.entities.values():
                     response.append(
-                        discovery(
-                            device['name'],
-                            device['type'],
-                            device['traits']
-                        )
+                        discovery(device["name"], device["type"], device["traits"])
                     )
                 print(response)
                 return self.json(response)
+
         return Endpoint
 
     @rest_endpoint
@@ -90,4 +87,5 @@ class Google:
 
             async def post(self, request: web.Request):
                 return self.json({})
+
         return Endpoint

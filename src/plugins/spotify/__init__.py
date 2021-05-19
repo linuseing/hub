@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from core import Core
 
 
-MediaURI = NewType('MediaURI', str)
+MediaURI = NewType("MediaURI", str)
 
 
 def playback_stopped_event(track: Optional[asp.track.FullTrack]):
@@ -57,8 +57,8 @@ class Spotify:
         self.playlists = []
         self.auth = ServiceAuth(
             core,
-            client_id=os.getenv('SPOTIFY_CLIENT'),
-            client_secret=os.getenv('SPOTIFY_SECRET'),
+            client_id=os.getenv("SPOTIFY_CLIENT"),
+            client_secret=os.getenv("SPOTIFY_SECRET"),
             scope=self.scopes,
             storage=f"{self.core.location}/config/spotify/secret.json",
         )
@@ -97,7 +97,9 @@ class Spotify:
         self.song_length: Setter[int] = core.storage.setter_factory(
             "spotify.song_length"
         )
-        self.shows: Setter[Dict[str, Show]] = core.storage.setter_factory("spotify.shows")
+        self.shows: Setter[Dict[str, Show]] = core.storage.setter_factory(
+            "spotify.shows"
+        )
         self.shows.value = {}
 
         core.api.gql.add_mutation("spotifyNext: String", self.gql_next)
@@ -262,14 +264,13 @@ class Spotify:
         shows: Dict[str, Show] = {}
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                "https://api.spotify.com/v1/me/shows",
-                headers=self.auth.header
+                "https://api.spotify.com/v1/me/shows", headers=self.auth.header
             ) as resp:
                 shows_json = await resp.json()
-                for show_info in shows_json['items']:
+                for show_info in shows_json["items"]:
                     show = Show(
-                        show_info['show']['name'],
-                        show_info['show']['id'],
+                        show_info["show"]["name"],
+                        show_info["show"]["id"],
                     )
                     shows[show.name] = show
         return shows
@@ -279,12 +280,12 @@ class Spotify:
             _id = self.shows.value[show].id
             async with session.get(
                 f"https://api.spotify.com/v1/shows/{_id}/episodes",
-                headers=self.auth.header
+                headers=self.auth.header,
             ) as resp:
                 json = await resp.json()
-                return json['items'][0]['uri']
+                return json["items"][0]["uri"]
 
-    @formatter('spotify.get_latest_episode')
+    @formatter("spotify.get_latest_episode")
     async def f1(self, _in: Any, show: str) -> MediaURI:
         return await self._get_latest_episode(show)
 

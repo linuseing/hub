@@ -9,23 +9,24 @@ if TYPE_CHECKING:
     from core import Core
 
 
-LOGGER = logging.getLogger('spotify.auth')
+LOGGER = logging.getLogger("spotify.auth")
 
 
 class ServiceAuth(AuthorizationCodeFlow):
-
-    def __init__(self, core: 'Core', *args, storage='secret.json', **kwargs):
-        super().__init__(*args, redirect_uri='http://localhost/', **kwargs)
+    def __init__(self, core: "Core", *args, storage="secret.json", **kwargs):
+        super().__init__(*args, redirect_uri="http://localhost/", **kwargs)
         self.storage = storage
         self.core = core
 
     async def setup(self):
-        print('(re-)login to spotify needed!')
+        print("(re-)login to spotify needed!")
         LOGGER.debug("(re-)login to spotify needed!")
 
-        self.core.storage.update_value("spotify.auth_url", str(self.create_authorize_route()))
+        self.core.storage.update_value(
+            "spotify.auth_url", str(self.create_authorize_route())
+        )
         event = await self.core.bus.wait_for("spotify.auth_url")
-        print('lets go!')
+        print("lets go!")
 
         url = event.event_content
 
@@ -38,7 +39,7 @@ class ServiceAuth(AuthorizationCodeFlow):
     async def load(self):
         if isfile(self.storage):
             # if storage file exists, read and deserialize it
-            with open(self.storage, 'r') as f:
+            with open(self.storage, "r") as f:
                 try:
                     raw_data = loads(f.read())
                 except JSONDecodeError:
@@ -49,5 +50,5 @@ class ServiceAuth(AuthorizationCodeFlow):
 
     async def store(self, response):
         # simply store the response as a dumped json dict
-        with open(self.storage, 'w') as f:
+        with open(self.storage, "w") as f:
             f.write(dumps(response.to_dict(), indent=2))

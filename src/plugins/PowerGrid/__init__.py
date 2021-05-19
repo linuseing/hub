@@ -83,7 +83,7 @@ class PowerGrid:
         ]:
             self.power_up()
             if entity.name in self._retry:
-                await asyncio.sleep(.75)
+                await asyncio.sleep(0.75)
                 await entity.call_method("switch", "set", new_state, Context.admin())
 
     def power_up(self):

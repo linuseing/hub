@@ -17,7 +17,7 @@ class Arg:
     def gql(self):
         t_n = ""
         try:
-            if hasattr(self.type, '_name'):
+            if hasattr(self.type, "_name"):
                 t_n = self.type._name
             else:
                 t_n = self.type.__name__
@@ -25,10 +25,10 @@ class Arg:
             t_n = str(self.type)
 
         return {
-            'doc': self.doc,
-            'type': t_n,
-            'default': self.default,
-            'name': self.name
+            "doc": self.doc,
+            "type": t_n,
+            "default": self.default,
+            "name": self.name,
         }
 
 
@@ -81,7 +81,7 @@ class OutputService:
     @property
     def gql(self):
         return {
-            'name': self.name,
-            'description': self.doc.description,
-            'args': [arg.gql for arg in self.doc.args.values()]
+            "name": self.name,
+            "description": self.doc.description,
+            "args": [arg.gql for arg in self.doc.args.values()],
         }
