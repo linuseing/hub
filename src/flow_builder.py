@@ -35,8 +35,6 @@ def _build_micro_flow(name, core, config: List[Union[Dict[str, Dict], Dict[str, 
 
     core.io.setup_input(trigger, trigger_conf, flow.entry_point, None)
 
-    print(config[1:])
-
     for node_id, node_conf in enumerate(config[1:], start=1):
         pass_through = True
 
