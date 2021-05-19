@@ -15,10 +15,12 @@ from exceptions import ConfigError, EntityNotFound, ComponentNotFound
 from helper import yaml_utils
 from objects.Context import Context
 from objects.Event import Event
+from objects.OutputService import OutputService
 from objects.Scene import Scene
 from objects.User import User
 from objects.component import Component
 from objects.entity import Entity
+from plugin_loader import build_doc
 
 if TYPE_CHECKING:
     from core import Core
@@ -58,6 +60,46 @@ class EntityRegistry:
         self.load_and_build_scenes(f"{core.location}/config/scenes")
 
         self.state_queue = MultisubscriberQueue()
+
+        core.io.add_output_service(
+            "registry.activate_scene",
+            OutputService(
+                "registry.activate_scene",
+                self.activate_scene_handler,
+                None,
+                doc=build_doc(self.activate_scene_handler)
+            )
+        )
+
+        core.io.add_output_service(
+            "registry.deactivate_scene",
+            OutputService(
+                "registry.deactivate_scene",
+                self.deactivate_scene_handler,
+                None,
+                doc=build_doc(self.deactivate_scene_handler)
+            )
+        )
+
+    async def activate_scene_handler(self, _: Any, context: Context, scene: str = ""):
+        """
+        Activates a scene.
+        :param _:
+        :param scene:
+        :param context:
+        :return:
+        """
+        self.activate_scene(scene)
+
+    async def deactivate_scene_handler(self, _: Any, context: Context, scene: str = ""):
+        """
+        Deactivates a scene.
+        :param _:
+        :param scene:
+        :param context:
+        :return:
+        """
+        self.deactivate_scene(scene)
 
     def get_entities(self):
         return self._entities
