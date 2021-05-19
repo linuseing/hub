@@ -1,3 +1,5 @@
+import os
+
 import aiohttp
 import asyncspotify as asp
 
@@ -55,8 +57,8 @@ class Spotify:
         self.playlists = []
         self.auth = ServiceAuth(
             core,
-            client_id="e4e80f0e27f8414c811c3c654c421103",
-            client_secret="76e45ae197ce447aa341da133312b39b",
+            client_id=os.getenv('SPOTIFY_CLIENT'),
+            client_secret=os.getenv('SPOTIFY_SECRET'),
             scope=self.scopes,
             storage=f"{self.core.location}/config/spotify/secret.json",
         )
