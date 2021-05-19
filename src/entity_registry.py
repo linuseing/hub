@@ -81,6 +81,26 @@ class EntityRegistry:
             )
         )
 
+        core.io.add_output_service(
+            "registry.set_state",
+            OutputService(
+                "registry.set_state",
+                self.set_state,
+                None,
+                doc=build_doc(self.set_state)
+            )
+        )
+
+    async def set_state(self, target: Any, context: Context, device: str = ""):
+        """
+
+        :param target:
+        :param context:
+        :param device:
+        :return:
+        """
+        await self.set_state(target, context, device)
+
     async def activate_scene_handler(self, _: Any, context: Context, scene: str = ""):
         """
         Activates a scene.
