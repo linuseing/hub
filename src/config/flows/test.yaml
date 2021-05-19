@@ -1,8 +1,0 @@
-- config:
-    active: 1
-    suspend_on_error: 1
-- hue.sensor:
-      sensor: linus zimmer Schalter
-      event: 1002
-- bus.dispatch:
-    event_type: test

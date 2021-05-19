@@ -1,4 +1,0 @@
-type: Lamp
-control: hue.set
-switch:
-  device: Grid
