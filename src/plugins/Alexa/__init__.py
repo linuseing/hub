@@ -110,7 +110,7 @@ class Alexa:
         if target:
             self.core.registry.activate_scene(device)
         else:
-            print(f'turning scene {device} off')
+            self.core.registry.deactivate_scene(device)
 
     async def switch(self, device: str, target: bool):
         await self.core.registry.async_call_method_d(

@@ -9,6 +9,12 @@ class Scene:
         self.core = core
         self.states: Dict[str, Any] = {}
 
+        self.deactivate_states: Dict[str, Any] = {}
+
     def activate(self):
         for device, state in self.states.items():
+            self.core.registry.call_method_d(device + ".set", state)
+
+    def deactivate(self):
+        for device, state in self.deactivate_states.items():
             self.core.registry.call_method_d(device + ".set", state)

@@ -138,6 +138,9 @@ class EntityRegistry:
     def activate_scene(self, scene: str):
         self._scenes[scene].activate()
 
+    def deactivate_scene(self, scene: str):
+        self._scenes[scene].deactivate()
+
     def get_scenes(self) -> List[str]:
         return list(self._scenes.keys())
 
@@ -183,7 +186,15 @@ class EntityRegistry:
         for config, file in yaml_utils.for_yaml_in(path):
             name = config.get("name", None) or file[:-5]
             scene = Scene(self.core)
-            scene.states = config
+
+            if 'on' in config:
+                scene.states = config['on']
+            if 'off' in config:
+                scene.deactivate_states = config['off']
+
+            if 'off' not in config and 'on' not in config:
+                scene.states = config
+
             self._scenes[name] = scene
 
     @property
