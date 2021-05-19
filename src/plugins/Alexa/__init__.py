@@ -99,7 +99,6 @@ class Alexa:
             url = "/api/scenes"
 
             async def get(self, request: web.Request):
-                print(await request.json())
                 return self.json({'scenes': alexa.core.registry.get_scenes()})
 
         return AlexaDevices
@@ -108,8 +107,10 @@ class Alexa:
         self.core.add_job(self._controller[namespace], entity, target)
 
     async def scene(self, device, target: Any):
-        print(device)
-        self.core.registry.activate_scene(device)
+        if target:
+            self.core.registry.activate_scene(device)
+        else:
+            print(f'turning scene {device} off')
 
     async def switch(self, device: str, target: bool):
         await self.core.registry.async_call_method_d(
