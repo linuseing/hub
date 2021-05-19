@@ -91,15 +91,15 @@ class EntityRegistry:
             )
         )
 
-    async def set_state(self, target: Any, context: Context, device: str = ""):
+    async def set_state(self, target: Any, context: Context, component: str = ""):
         """
 
         :param target:
         :param context:
-        :param device:
+        :param component: Component address (dotted) e.g. 'projector.switch'
         :return:
         """
-        await self.set_state(target, context, device)
+        await self.set_state(target, context, component)
 
     async def activate_scene_handler(self, _: Any, context: Context, scene: str = ""):
         """
