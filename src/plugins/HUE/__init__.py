@@ -43,6 +43,13 @@ class HUE:
 
     @output_service("hue.set")
     async def set_state(self, target, context: Context, device: str):
+        """
+        set state of a hue device
+        :param target:
+        :param context:
+        :param device:
+        :return:
+        """
         if type(target) is bool:
             await self._lights[device].set_state(on=target)
         elif type(target) in [int, float]:

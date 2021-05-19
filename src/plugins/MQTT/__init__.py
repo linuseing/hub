@@ -63,7 +63,7 @@ class MQTT:
             self.core.add_job(callback, msg, context)
 
     @input_service("mqtt.subscribe", None)
-    def subscribe(self, callback: Callable, topic: str, qos=0):
+    def subscribe(self, callback: Callable, topic: str, qos: int = 0):
         """
         Subscribe to a topic
         :param callback:
@@ -87,7 +87,7 @@ class MQTT:
 
     @output_service("mqtt.publish", None, None)
     async def async_publish(
-        self, payload: Any, context: Context, topic: str, qos=0, retain=True
+        self, payload: Any, context: Context, topic: str, qos: int = 0, retain: bool = True
     ):
         """
         Publish a message over MQTT

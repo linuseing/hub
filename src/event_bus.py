@@ -31,6 +31,7 @@ class EventBus:
         core.io.add_output_service(
             "bus.dispatch",
             OutputService(
+                "bus.dispatch",
                 self.dispatch_event_service,
                 None,
                 doc=build_doc(self.dispatch_event_service),
@@ -142,7 +143,13 @@ class EventBus:
     async def dispatch_event_service(
         self, content: Any, context: Context, event_type: str = ""
     ):
-        """dispatch an event on the event bus"""
+        """
+        dispatch an event on the event bus
+        :param content:
+        :param context:
+        :param event_type:
+        :return:
+        """
         if context.authorize(BUS, DISPATCH_EVENT):
             event = Event(event_type, content, context)
             self.dispatch(event)
