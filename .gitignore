@@ -1,6 +1,6 @@
 # Hub specific
-src/config
-*/hub.iml
+src/config/
+*hub.iml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
