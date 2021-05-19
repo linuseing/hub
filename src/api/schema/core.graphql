@@ -10,8 +10,8 @@ type OutputService {
 }
 
 type ArgDocs {
-    doc: String!
-    type: String!
-    default: Any!
-    name: String!
+    doc: String
+    type: String
+    default: Any
+    name: String
 }
