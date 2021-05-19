@@ -98,7 +98,8 @@ class Alexa:
         class AlexaDevices(RESTEndpoint):
             url = "/api/scenes"
 
-            async def get(self, _):
+            async def get(self, request: web.Request):
+                print(await request.json())
                 return self.json({'scenes': alexa.core.registry.get_scenes()})
 
         return AlexaDevices
