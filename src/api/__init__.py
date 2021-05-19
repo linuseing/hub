@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
 LOGGER = logging.getLogger("API")
 
+logging.getLogger("aiohttp.access").setLevel(logging.FATAL)
+
 
 class API:
     def __init__(self, core: "Core", api_tokens=None):
