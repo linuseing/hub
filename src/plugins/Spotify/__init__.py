@@ -42,7 +42,7 @@ def playback_device_change(device: asp.Device):
     return Event(event_type=EVENT_PLAYBACK_DEVICE_CHANGE, event_content=device)
 
 
-@plugin("spotify")
+@plugin("Spotify", doc={'Spotify': 'docs.md'})
 class Spotify:
     def __init__(self, core: "Core", config: Dict):
         self.core = core
