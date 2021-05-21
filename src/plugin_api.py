@@ -5,10 +5,11 @@ from voluptuous import Schema
 from constants.plugin_api import *
 
 
-def plugin(name):
+def plugin(name, doc=None):
     def wrapper(cls):
         setattr(cls, "plugin", True)
         setattr(cls, PLUGIN_NAME_ATTR, name)
+        setattr(cls, DOC_FILE, doc)
         return cls
 
     return wrapper

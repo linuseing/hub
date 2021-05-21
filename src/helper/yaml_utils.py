@@ -45,3 +45,8 @@ def for_yaml_in(dir_path: str, def_dict=False, def_lambda=lambda: {}):
             if def_dict:
                 _yaml = defaultdict(def_lambda, _yaml if _yaml is not None else {})
             yield _yaml, file
+
+
+def save_to_yaml(file: str, data: dict):
+    with open(file, 'w') as outfile:
+        yaml.dump(data, outfile, default_flow_style=False)

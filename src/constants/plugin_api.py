@@ -26,3 +26,5 @@ REST_METHOD = "rest_method"
 
 DATA_BOUND = "data_bound"
 DATA_ENTRY = "data_entry"
+
+DOC_FILE = "plugin_doc_file"

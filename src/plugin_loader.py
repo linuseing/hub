@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from inspect import (
     getmembers,
     isclass,
@@ -21,6 +22,7 @@ from constants.plugin_api import *
 from objects.InputService import InputService
 from objects.OutputService import OutputService, ServiceDocs, Arg
 from objects.core_state import CoreState
+import mkdocs
 
 
 LOGGER = logging.getLogger("PluginLoader")
@@ -67,13 +69,25 @@ def load_plugins(core):
     white_list = list(map(lambda x: x.upper(), white_list))
     plugins = {}
     loaded = []
-    for module in package_loader.import_submodules(
+
+    doc_pages = []
+
+    for pkg_name, pkg_path, module in package_loader.submodules(
         plugins_root, recursive=True
-    ).values():
+    ):
         for obj_name, obj in getmembers(module, isclass):
             if not is_plugin(obj) or getattr(obj, PLUGIN_NAME_ATTR, None) in loaded:
                 continue
+
             name = getattr(obj, PLUGIN_NAME_ATTR, None)
+
+            if os.getenv("BUILD_AND_SERVE_DOCS", False):
+                if files := getattr(obj, DOC_FILE, None):
+                    path = pkg_path
+                    for page_name, file in files.items():
+                        shutil.copy(f"{path}/{file}", r"docs/docs/"+f"{page_name}.md")
+                        doc_pages.append({page_name: f"{page_name}.md"})
+
             loaded.append(name)
             if os.path.exists(f"{core.location}/config/{name.lower()}"):
                 config = {}
@@ -170,5 +184,16 @@ def load_plugins(core):
                     core.io.add_formatter(formatter_name, formatter)
 
     LOGGER.info(f"loaded: {list(plugins.keys())}")
+
+    if os.getenv("BUILD_AND_SERVE_DOCS", False):
+        _config = yaml_utils.load_yaml(f"docs/mkdocs.yml")
+        _config['nav'] = _config['core_pages']+doc_pages
+        yaml_utils.save_to_yaml(f"docs/mkdocs.yml", _config)
+        try:
+            os.system("cd docs && mkdocs build")
+        except:
+            LOGGER.info("couldn't build docs")
+
+    LOGGER.info(f"rebuild local documentation")
 
     return plugins
