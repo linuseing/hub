@@ -1,0 +1,11 @@
+core_pages:
+- &id001
+  General: idea.md
+- &id002
+  About the Docs: docs.md
+nav:
+- *id001
+- *id002
+- Spotify: Spotify.md
+site_name: My Docs
+theme: readthedocs

@@ -2,8 +2,6 @@
 src/config/
 *hub.iml
 
-docs/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
