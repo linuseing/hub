@@ -5,13 +5,13 @@ from asyncspotify import Device
 
 from objects.Event import Event
 from plugin_api import plugin, on, run_after_init, bind_to, output_service
-from plugins.spotify import Spotify
-from plugins.spotify.constants import *
-from plugins.TCPCEC import TCPCEC, CECCommand, Command
+from plugins.Spotify.constants import *
+from plugins.TCPCEC import CECCommand, Command
 
 if TYPE_CHECKING:
     from core import Core
-
+    from plugins.Spotify import Spotify
+    from plugins.TCPCEC import TCPCEC
 
 VOLUME_FACTOR = 3
 
@@ -22,8 +22,8 @@ class MediaManger:
         self.core = core
         self.config = config
 
-        self.tcp_cec: Optional[TCPCEC] = None
-        self.spotify: Optional[Spotify] = None
+        self.tcp_cec: "Optional[TCPCEC]" = None
+        self.spotify: "Optional[Spotify]" = None
 
         self._p_v = None
 
