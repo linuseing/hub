@@ -43,7 +43,12 @@ class EventBus:
             InputService(lambda c, event_type: self.listen(event_type, c), None),
         )
 
+        core.api.gql.add_mutation("dispatchEvent(eventType: String, eventContent: Any): Boolean", self.gql_dispatch_event)
+
         self._event_stream = MultisubscriberQueue()
+
+    async def gql_dispatch_event(self, *_, eventType="", eventContent=None):
+        self.core.bus.dispatch(Event(event_type=eventType, event_content=eventContent))
 
     def dispatch(self, event: Event):
         """Dispatches an event on the bus"""
