@@ -15,9 +15,9 @@ type Subscription {
     eventStream: Event!
 }
 type Mutation {
-    setComponent(entity: String, component: String, target: Any): Boolean!
-    callComponentMethod(entity: String, component: String, method: String, target: Any): Boolean!
-    setValue(key: String, value: Any): Boolean!
-    dispatchEvent(eventType: String, eventContent: Any): Boolean!
-    activateScene(scene: String): Boolean!
+    setComponent(entity: String, component: String, target: Any): Boolean
+    callComponentMethod(entity: String, component: String, method: String, target: Any): Boolean
+    setValue(key: String, value: Any): Boolean
+    dispatchEvent(eventType: String, eventContent: Any): Boolean
+    activateScene(scene: String): Boolean
 }
