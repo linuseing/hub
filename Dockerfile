@@ -18,6 +18,8 @@ RUN pip3 install -r /requirements.txt
 
 COPY ./src .
 
+COPY ./docs ./docs
+
 ARG COMMIT="???"
 
 ENV COMMIT=$COMMIT
