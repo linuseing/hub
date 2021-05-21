@@ -16,11 +16,11 @@ FROM base as final
 COPY --from=builder /requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
 
-RUN mkdir ./docs
-
 COPY ./src .
 
-COPY ./docs ./docs
+COPY ./docs .
+
+RUN ls
 
 ARG COMMIT="???"
 
