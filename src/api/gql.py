@@ -32,7 +32,7 @@ class GraphAPI:
     def __init__(self, core: "Core"):
         self.core = core
         self.type_defs = load_schema_from_path(f"{core.location}/api/schema/")
-        self.add_query("spotifyProgress: String!", self.type_defs)
+        # self.add_query("spotifyProgress: String!", self.type_defs)
 
         self.query.set_field(CORE_VERSION, lambda *_: core.version)
         self.query.set_field(PLUGIN_VERSION, lambda *_: VERSION)
@@ -103,7 +103,7 @@ class GraphAPI:
             allow_methods=("GET", "POST", "OPTIONS"),
         )
         conf = Config()
-        conf.bind = ["0.0.0.0:8000"]
+        conf.bind = ["0.0.0.0:8006"]
         conf.loglevel = "fatal"  # to suppress lifespan error
         LOGGER.info("starting GQL API")
         try:  # also to suppress lifespan error
