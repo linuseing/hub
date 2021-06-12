@@ -185,7 +185,7 @@ def load_plugins(core):
 
     LOGGER.info(f"loaded: {list(plugins.keys())}")
 
-    if os.getenv("BUILD_AND_SERVE_DOCS", False):
+    if False:
         _config = yaml_utils.load_yaml(f"docs/mkdocs.yml")
         _config['nav'] = _config['core_pages']+doc_pages
         yaml_utils.save_to_yaml(f"docs/mkdocs.yml", _config)
@@ -194,6 +194,6 @@ def load_plugins(core):
         except:
             LOGGER.info("couldn't build docs")
 
-    LOGGER.info(f"rebuild local documentation")
+        LOGGER.info(f"rebuild local documentation")
 
     return plugins

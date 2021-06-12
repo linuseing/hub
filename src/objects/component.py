@@ -46,6 +46,12 @@ class Component(Generic[T]):
         self.name = name
         self.dotted = f"{entity.name}.{name}"
 
+    async def execute(self, context=None) -> T:
+        if context is None:
+            context = Context.default()
+        await self.handler(self.state, context)
+        return self.state
+
     def to_json(self) -> JSONInterface:
         return {
             "name": self.name,

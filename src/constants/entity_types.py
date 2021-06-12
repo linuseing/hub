@@ -7,6 +7,7 @@ class EntityType(Enum):
     LAMP_BRIGHTNESS = "Lamp-dimmable"
     SWITCH = "Switch"
     COMPOSED = "COMPOSED"
+    BLINDS = "Blinds"
 
     @classmethod
     def types(cls):

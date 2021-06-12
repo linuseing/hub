@@ -3,9 +3,12 @@ core_pages:
   General: idea.md
 - &id002
   About the Docs: docs.md
+- &id003
+  Entities: Entities.md
 nav:
 - *id001
 - *id002
+- *id003
 - Spotify: Spotify.md
 site_name: My Docs
 theme: readthedocs

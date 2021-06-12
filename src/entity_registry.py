@@ -3,8 +3,10 @@ import logging
 
 from asyncio_multisubscriber_queue import MultisubscriberQueue
 
+from builder.blinds import blinds_builder
 from builder.lamps import *
 from builder.switch import *
+from components.blinds import Blinds
 from components.brightness import Brightness
 from components.color import Color
 from components.switch import Switch
@@ -49,12 +51,14 @@ class EntityRegistry:
             EntityType.LAMP_BRIGHTNESS: dimmable_lamp_builder,
             EntityType.LAMP_RGB: rgb_lamp_builder,
             EntityType.SWITCH: switch_builder,
+            EntityType.BLINDS: blinds_builder,
         }
         self._default_builder: Optional[Builder] = None
         self._components: Dict[str, Type[Component]] = {
             SWITCH: Switch,
             BRIGHTNESS: Brightness,
             COLOR: Color,
+            BLINDS: Blinds
         }
         self.load_entities_from_config(f"{core.location}/config/entities")
         self.load_and_build_scenes(f"{core.location}/config/scenes")
