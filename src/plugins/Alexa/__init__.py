@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, TYPE_CHECKING, Callable, Any, Coroutine
 
 from aiohttp import web
@@ -18,6 +19,9 @@ ActionController = Callable[[str, Any], Coroutine[Any, Any, None]]
 ConfBuilder = Callable[[Entity], Dict]
 
 
+LOGGER = logging.getLogger("Alexa")
+
+
 @plugin("alexa")
 class Alexa:
     def __init__(self, core: "Core", config: Dict = None):
@@ -30,12 +34,14 @@ class Alexa:
             "ColorController": self.color,
             "PowerController": self.switch,
             "SceneController": self.scene,
+            "BlindsController": self.blinds,
         }
         self._mappings: Dict[str, str] = {
             "brightness": "BrightnessController",
             "color": "ColorController",
             "switch": "PowerController",
             "temperature": "ThermostatController",
+            "blinds": "BlindsController"
         }
 
         self._type_map = {
@@ -43,6 +49,7 @@ class Alexa:
             EntityType.LAMP_RGB: "LIGHT",
             EntityType.LAMP_BRIGHTNESS: "LIGHT",
             EntityType.SWITCH: "LIGHT",
+            EntityType.BLINDS: "INTERIOR_BLIND",
         }
 
     @on(ENTITY_CREATED)
@@ -81,6 +88,7 @@ class Alexa:
 
         if namespace in self._controller:
             json = await request.json()
+            print(endpoint, namespace, json["target"])
             self.set_state(endpoint, namespace, json["target"])
 
     @rest_endpoint
@@ -89,6 +97,7 @@ class Alexa:
             url = "/alexa/devices"
 
             async def get(self, _):
+                LOGGER.info("Alexa sync started!")
                 return self.json(alexa._devices)
 
         return AlexaDevices
@@ -131,6 +140,14 @@ class Alexa:
             f'{self._devices[device]["capabilities"]["ColorController"]}.hsv',
             target,
             self.get_context(device),
+        )
+
+    async def blinds(self, device: str, target: Any):
+        target = target["rangeValue"]
+        await self.core.registry.async_call_method_d(
+            f'{self._devices[device]["capabilities"]["BlindsController"]}.set',
+            target,
+            self.get_context(device)
         )
 
     def get_context(self, device: str):

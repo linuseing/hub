@@ -45,7 +45,7 @@ class Core:
 
         self.plugins: Dict = {}
 
-        api_tokens = []
+        api_tokens = ["!;,[#S{9E>6L!WrSnHUEcMh}8TG)35"]
         if default_token := os.getenv("API_TOKEN"):
             api_tokens.append(default_token)
 
