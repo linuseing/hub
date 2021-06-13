@@ -88,7 +88,6 @@ class Alexa:
 
         if namespace in self._controller:
             json = await request.json()
-            print(endpoint, namespace, json["target"])
             self.set_state(endpoint, namespace, json["target"])
 
     @rest_endpoint
