@@ -263,7 +263,7 @@ class EntityRegistry:
             if False in config:
                 scene.deactivate_states = config[False]
 
-            if "off" not in config and "on" not in config:
+            if True not in config and False not in config:
                 scene.states = config
 
             self._scenes[name] = scene
