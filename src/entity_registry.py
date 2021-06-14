@@ -257,11 +257,11 @@ class EntityRegistry:
         for config, file in yaml_utils.for_yaml_in(path):
             name = config.get("name", None) or file[:-5]
             scene = Scene(self.core)
-
-            if "on" in config:
-                scene.states = config["on"]
-            if "off" in config:
-                scene.deactivate_states = config["off"]
+            print(config)
+            if True in config:
+                scene.states = config[True]
+            if False in config:
+                scene.deactivate_states = config[False]
 
             if "off" not in config and "on" not in config:
                 scene.states = config
