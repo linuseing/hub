@@ -52,15 +52,27 @@ def _build_micro_flow(
                 PASS_THROUGH_NEVER,
             ]:
                 pass_through = False
+                node = Node(
+                    handler,
+                    None,
+                    pass_through,
+                    next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
+                )
+        elif service.startswith("n_"):
+            node = core.engine.nodes[service.strip("n_")](
+                list(node_conf.values())[0],
+                flow,
+                next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
+            )
         else:
             handler = core.io.build_handler(service, list(node_conf.values())[0])
 
-        node = Node(
-            handler,
-            None,
-            pass_through,
-            next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
-        )
+            node = Node(
+                handler,
+                None,
+                pass_through,
+                next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
+            )
 
         flow.add_node(str(node_id), node)
     flow.root_node = "1"

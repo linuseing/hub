@@ -33,6 +33,8 @@ class Flow:
         self._trigger: List[Callable] = []
         self.root_node: str = ""
 
+        self._storage = {}
+
     async def entry_point(self, payload: Any, context: Context):
         await self._run(self.root_node, payload, context)
 
@@ -40,6 +42,12 @@ class Flow:
         go_to = await self._nodes[node].execute(payload, context)
         for node, payload in go_to.items():
             self.core.add_job(self._run, node, payload, context)
+
+    def store(self, key: str, value):
+        self._storage[key] = value
+
+    def get(self, key: str) -> Any:
+        return self._storage.get(key, None)
 
     def add_node(self, name: str, node: Node):
         self._nodes[name] = node

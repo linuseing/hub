@@ -5,7 +5,7 @@ from flow_builder import FlowSyntax
 from exceptions import FlowNotFound
 from helper.yaml_utils import for_yaml_in
 from objects.Context import Context
-from objects.flow import Flow
+from objects.flow import Flow, Node
 
 if TYPE_CHECKING:
     from core import Core
@@ -15,11 +15,39 @@ def default_run_context():
     return Context.admin()
 
 
+class Store:
+
+    def __init__(self, conf, flow, next_nodes):
+        self.flow = flow
+        self.key = conf['key']
+        self._next_nodes = next_nodes
+
+    async def execute(self, payload: Any, context: Context) -> Dict[str, Any]:
+        self.flow.store(self.key, payload)
+        return {node: payload for node in self._next_nodes}
+
+
+class Retrieve:
+
+    def __init__(self, conf, flow, next_nodes):
+        self.flow = flow
+        self.key = conf['key']
+        self._next_nodes = next_nodes
+
+    async def execute(self, payload: Any, context: Context) -> Dict[str, Any]:
+        value = self.flow.geet(self.key)
+        return {node: value for node in self._next_nodes}
+
+
 class FlowEngine:
     def __init__(self, core: "Core"):
         self.core = core
 
         self._flows: Dict[str, Flow] = {}
+        self.nodes: Dict[str, Any] = {
+            "store": Store,
+            "retrieve": Retrieve
+        }
 
         self.init_from_config()
 
