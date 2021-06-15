@@ -24,10 +24,10 @@ class Blinds(Component[int]):
         self.state = int(target)
         return await self.execute()
 
-    async def open(self, _, context) -> int:
+    async def open(self, _: float, context) -> int:
         self.state = 0
         return await self.execute()
 
-    async def close(self, _, context) -> int:
+    async def close(self, _: float, context) -> int:
         self.state = 0
         return await self.execute()

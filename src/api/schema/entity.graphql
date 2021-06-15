@@ -37,6 +37,14 @@ type Brightness implements Component {
     methods: [String]
 }
 
+type Blinds implements Component {
+  name: String!
+  type: String!
+  address: String!
+  state: Any!
+  methods: [String]
+}
+
 type EntitySubscription {
     entities: [Entity]
 }
