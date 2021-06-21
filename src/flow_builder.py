@@ -47,17 +47,13 @@ def _build_micro_flow(
         )
         if service.startswith("f_"):
             handler = core.io.get_formatter(service.strip("f_"))
-            if settings[PASS_THROUGH_BEHAVIOR] in [
-                PASS_THROUGH_EXCEPT_FORMATTER,
-                PASS_THROUGH_NEVER,
-            ]:
-                pass_through = False
-                node = Node(
-                    handler,
-                    None,
-                    pass_through,
-                    next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
-                )
+            pass_through = False
+            node = Node(
+                handler,
+                None,
+                pass_through,
+                next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
+            )
         elif service.startswith("n_"):
             node = core.engine.nodes[service.strip("n_")](
                 list(node_conf.values())[0],
