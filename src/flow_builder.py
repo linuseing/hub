@@ -41,15 +41,14 @@ def _build_micro_flow(
 
     for node_id, node_conf in enumerate(config[1:], start=1):
         pass_through = True
-
         service: str = (
             node_conf if type(node_conf) is str else list(node_conf.items())[0][0]
         )
         if service.startswith("f_"):
-            handler = core.io.get_formatter(service.strip("f_"))
+            handler = core.io.build_pipe([node_conf])
             pass_through = False
             node = Node(
-                handler,
+                lambda i, c: handler(i),
                 None,
                 pass_through,
                 next_nodes=[str(node_id + 1)] if node_id < (len(config) - 1) else [],
