@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import TYPE_CHECKING, Callable, Any, TypeVar, Generic
+from typing import TYPE_CHECKING, Callable, Any, TypeVar, Generic, Dict
 
 from asyncio_multisubscriber_queue import MultisubscriberQueue
 
@@ -35,6 +35,9 @@ class Setter(Generic[X]):
 
     @value.setter
     def value(self, value: X):
+        self.storage.update_value(self.key, value)
+
+    def __call__(self, value: X):
         self.storage.update_value(self.key, value)
 
 
@@ -100,6 +103,10 @@ class Storage:
         if call_on_init:
             self.core.add_job(callback, self.storage[key].value)
         return unregister
+
+    def store_dict(self, top_level_key, value: Dict):
+        for key, value in value.items():
+            self.update_value(f"{top_level_key}.{key}", value)
 
     def register_conditional_callback(
         self, key: str, callback: Callable, condition: Callable

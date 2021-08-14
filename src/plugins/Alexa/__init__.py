@@ -82,14 +82,7 @@ class Alexa:
 
         self._devices[conf["name"]] = conf
 
-    @rest_handler("/alexa/set/{endpoint}/{namespace}", "post")
-    async def set(self, request: web.Request, endpoint: str, namespace: str):
-        namespace = namespace.split(".")[1]
-
-        if namespace in self._controller:
-            json = await request.json()
-            self.set_state(endpoint, namespace, json["target"])
-
+    
     @rest_endpoint
     def get_factory(alexa):
         class AlexaDevices(RESTEndpoint):
