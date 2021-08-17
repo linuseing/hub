@@ -1,6 +1,6 @@
 import logging
 import sys
-import time, asyncio
+import asyncio
 import uvloop
 
 from core import Core
@@ -15,6 +15,8 @@ logging.basicConfig(
     datefmt="%d-%b-%y %H:%M:%S",
     stream=sys.stdout,
 )
+
+logging.getLogger("asyncio").setLevel(logging.FATAL)
 
 l = asyncio.get_event_loop()
 l.set_debug(True)
