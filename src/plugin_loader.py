@@ -14,6 +14,7 @@ from typing import Type, Callable
 
 from docstring_parser import parse
 
+import plugin_api
 import plugins as plugins_root
 from IO import Formatter
 from api import RESTEndpoint
@@ -103,8 +104,11 @@ def load_plugins(core):
                 config = {}
 
             if name and name.upper() in white_list:
-
-                instance = obj(core, config)
+                try:
+                    instance = obj(core, config)
+                except plugin_api.InitializationError as err:
+                    LOGGER.warning(f"The following error occurred while initializing the {name} plugin: {err.msg}")
+                    continue
 
                 for _, callback in getmembers(instance, iscoroutinefunction):
                     if getattr(callback, "run_after_init", False):

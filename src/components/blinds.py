@@ -21,6 +21,8 @@ class Blinds(Component[int]):
         }
 
     async def set(self, target: float, context) -> int:
+        if target > 100 or target < 0:
+            raise ValueError("Value must be between 0 and 100 (inclusive)!")
         self.state = int(target)
         return await self.execute()
 

@@ -112,3 +112,9 @@ def bind_to(entry: str):
         return func
 
     return wrapper
+
+
+class InitializationError(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg

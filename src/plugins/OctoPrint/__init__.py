@@ -15,9 +15,12 @@ class OctoPrint:
 
     def __init__(self, core: "Core", config: Dict):
         self.core = core
-        self.ip = config["ip"]
-        self.port = config["port"]
-        self.auth_key = config["key"]
+        self.ip = config.get("ip", "octopi.local")
+        self.port = config.get("port", 80)
+        try:
+            self.auth_key = config["key"]
+        except KeyError:
+            raise plugin_api.InitializationError("missing auth key in config!")
         self.client = Client(f'http://{self.ip}:{self.port}', self.auth_key)
 
         self.printing = 0
