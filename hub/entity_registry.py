@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING, Dict, Callable, Type, Union, Optional, Any, List
 import logging
 
 from asyncio_multisubscriber_queue import MultisubscriberQueue
@@ -22,7 +21,7 @@ from objects.Scene import Scene
 from objects.User import User
 from objects.component import Component
 from objects.entity import Entity
-from plugin_loader import build_doc
+from loader.plugin_loader import build_doc
 
 if TYPE_CHECKING:
     from core import Core

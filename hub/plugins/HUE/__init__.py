@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from typing import TYPE_CHECKING, Dict, Optional, Any, List, Callable
 
@@ -6,18 +7,33 @@ import aiohue
 from aiohue import Bridge
 
 from objects.Context import Context
-from plugin_api import plugin, run_after_init, output_service, input_service
+from plugin_api import plugin, run_after_init, output_service, input_service, Plugin, test_schema, InitializationError
 from plugins.HUE.constants import *
+from plugins.HUE.schema import *
 
 if TYPE_CHECKING:
     from core import Core
 
 
+LOGGER = logging.getLogger("hue")
+
+
 @plugin("hue")
-class HUE:
+class HUE(Plugin):
     def __init__(self, core: "Core", config: Dict[str, Any]):
+        super().__init__("0.1")
+
+        if not test_config(config):
+            LOGGER.error("Unable to setup Hue integration because of config errors!")
+            raise InitializationError("")
+
         self.core = core
-        self.config = config
+        self.config = {
+            USERNAME: core.instance_name,
+            POLL_INTERVAL: 1,
+            HOST: "0.0.0.0"
+        }
+        self.config.update(config)
 
         self.bridge: Optional[Bridge] = None
 
@@ -31,7 +47,7 @@ class HUE:
     @run_after_init
     async def setup(self):
         await self.connect()
-
+        print("!!!!")
         for light in self.bridge.lights.values():
             self._lights[light.name] = light
 
@@ -88,7 +104,7 @@ class HUE:
 
     async def connect(self):
         self.bridge = aiohue.Bridge(
-            self.config["host"],
+            self.config[HOST],
             username=self.config[USERNAME],
             websession=aiohttp.ClientSession(),
         )
@@ -97,6 +113,6 @@ class HUE:
                 await self.bridge.create_user("riva")
             await self.bridge.initialize()
         except aiohue.Unauthorized:
-            pass
+            LOGGER.warning("Couldn't connect to Hue bridge, error: Unauthorized!")
         except aiohue.LinkButtonNotPressed:
-            pass
+            LOGGER.warning("Couldn't connect to Hue bridge, error: Link button not pressed!")

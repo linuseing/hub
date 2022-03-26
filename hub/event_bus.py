@@ -12,7 +12,7 @@ from objects.Context import Context
 from objects.Event import Event
 from objects.InputService import InputService
 from objects.OutputService import OutputService
-from plugin_loader import build_doc
+from loader.plugin_loader import build_doc
 
 if TYPE_CHECKING:
     from core import Core

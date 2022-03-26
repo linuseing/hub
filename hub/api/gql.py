@@ -108,6 +108,7 @@ class GraphAPI:
         LOGGER.info("starting GQL API")
         try:  # also to suppress lifespan error
             await serve(app, conf)
+            print("hallo???")
         except Exception as e:
             print(e)
 

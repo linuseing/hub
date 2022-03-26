@@ -2,6 +2,7 @@ import logging
 import sys
 import asyncio
 import uvloop
+import os
 
 from core import Core
 
@@ -21,6 +22,7 @@ logging.getLogger("asyncio").setLevel(logging.FATAL)
 l = asyncio.get_event_loop()
 l.set_debug(True)
 uvloop.install()
+print("to stop run:\nkill -TERM {}".format(os.getpid()))
 
 LOGGER.info(f"starting hub core version: {Core.version}")
 

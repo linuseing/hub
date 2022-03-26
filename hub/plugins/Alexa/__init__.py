@@ -9,22 +9,21 @@ from constants.events import ENTITY_CREATED
 from objects.Context import Context
 from objects.Event import Event
 from objects.entity import Entity
-from plugin_api import plugin, on, rest_handler, rest_endpoint
+from plugin_api import plugin, on, rest_endpoint, Plugin
 
 if TYPE_CHECKING:
     from core import Core
 
-
 ActionController = Callable[[str, Any], Coroutine[Any, Any, None]]
 ConfBuilder = Callable[[Entity], Dict]
-
 
 LOGGER = logging.getLogger("Alexa")
 
 
 @plugin("alexa")
-class Alexa:
+class Alexa(Plugin):
     def __init__(self, core: "Core", config: Dict = None):
+        super().__init__("0.1")
         self.core = core
         self.config = config
 
@@ -64,14 +63,14 @@ class Alexa:
         conf = {
             "capabilities": {},
             "category": entity.settings["alexa"]
-            .get("category", self._type_map[entity.type])
-            .upper(),
+                .get("category", self._type_map[entity.type])
+                .upper(),
             "name": entity.settings["alexa"].get("name", entity.name),
         }
 
         # implicit mapping
         for component in filter(
-            lambda c: c.type in self._mappings, entity.components.values()
+                lambda c: c.type in self._mappings, entity.components.values()
         ):
             conf["capabilities"][self._mappings[component.type]] = component.dotted
 
@@ -82,7 +81,6 @@ class Alexa:
 
         self._devices[conf["name"]] = conf
 
-    
     @rest_endpoint
     def get_factory(alexa):
         class AlexaDevices(RESTEndpoint):

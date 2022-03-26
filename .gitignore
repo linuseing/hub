@@ -1,5 +1,5 @@
 # Hub specific
-src/config/
+hub/config/
 *hub.iml
 
 # Byte-compiled / optimized / DLL files

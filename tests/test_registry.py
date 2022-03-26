@@ -1,6 +1,6 @@
 from unittest import TestCase
-from src.objects.User import User
-from src.entity_registry import EntityRegistry
+from hub.objects.User import User
+from hub.entity_registry import EntityRegistry
 
 lamp_config = """
 type: Lamp

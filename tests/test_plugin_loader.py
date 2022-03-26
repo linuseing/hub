@@ -1,5 +1,5 @@
 from unittest import TestCase
-from plugin_loader import build_doc
+from loader.plugin_loader import build_doc
 from objects.OutputService import ServiceDocs, Arg
 
 

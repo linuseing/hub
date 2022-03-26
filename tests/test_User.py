@@ -1,5 +1,5 @@
 from unittest import TestCase
-from src.objects.User import User
+from hub.objects.User import User
 
 
 class TestUser(TestCase):

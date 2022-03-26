@@ -1,4 +1,4 @@
-from typing import Callable, Optional, Any
+from typing import Callable, Optional, Any, Dict
 
 from voluptuous import Schema
 
@@ -114,7 +114,22 @@ def bind_to(entry: str):
     return wrapper
 
 
+def test_schema(schema: Schema, data: Dict) -> bool:
+    try:
+        schema(data)
+        return True
+    except:
+        return False
+
+
 class InitializationError(Exception):
 
     def __init__(self, msg):
         self.msg = msg
+
+
+class Plugin:
+
+    def __init__(self, version: str):
+        self.enabled: bool = True
+        self.version: str = version

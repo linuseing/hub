@@ -20,7 +20,7 @@ class SafeLineLoader(yaml.SafeLoader):
         return node
 
 
-def load_yaml(fname: str):
+def load_yaml(fname: str, ensure_path=False):
     """Load a YAML file."""
     try:
         with open(fname, encoding="utf-8") as conf_file:

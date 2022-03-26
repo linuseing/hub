@@ -74,7 +74,7 @@ class API:
             self._ws_command_handler[command] = handler
 
     async def start(self, port):
-        self.core.add_job(self.gql.setup)
+        # self.core.add_job(self.gql.setup)
         self.app._router.freeze = lambda: None
         self.runner = web.AppRunner(self.app)
         await self.runner.setup()
